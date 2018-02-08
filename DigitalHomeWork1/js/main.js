@@ -18,6 +18,7 @@ window.onload = function() {
         game.load.image( 'smug', 'assets/smugbg.png');
         game.load.image( 'planet', 'assets/planet1.png');
         game.load.image( 'player', 'assets/spaceGEOLOGIST.png');
+        game.load.image('space', 'assets/space.jpg');
         //Physics Loading
         this.game.load.physics("physics", "assets/physics.json");
     }
@@ -29,14 +30,15 @@ window.onload = function() {
     function create() {
         
         game.physics.startSystem(Phaser.Physics.P2JS);
-        //game.add.tileSprite(0,0,8000,8000, 'smug');
+        game.add.tileSprite(0,0,8000,8000, 'space');
+        game.add.sprite(4800,300,'smug');
         
         //Bounds stuff
         game.world.setBounds(0,0,4800,3600);
         // Create a sprite at the center of the screen using the 'logo' image.
-        planet = game.add.sprite( game.world.centerX, game.world.centerY, 'planet',4 );
+        planet = game.add.sprite( game.world.centerX, 3600, 'planet',4 );
         
-        player = game.add.sprite(game.world.centerX,50, 'player');
+        player = game.add.sprite(game.world.centerX,1000, 'player');
     
         // Anchor the sprite at its center, as opposed to its top-left corner.
         // so it will be truly centered.
@@ -84,8 +86,12 @@ window.onload = function() {
                 body1.body.force.y -= Math.cos(angle) * speed;
             }
         }else{
-            body1.body.force.x -= Math.abs(Math.sin(angle)) * speed * -1;
-            body1.body.force.y -= Math.abs(Math.cos(angle)) * speed * -1;
+             if(angle <= 0){
+                body1.body.force.x -= Math.sin(angle) * speed;
+                body1.body.force.y -= Math.cos(angle) * speed;
+            }
+            body1.body.force.x -= Math.abs(Math.sin(angle)) * speed;
+            body1.body.force.y -= Math.abs(Math.cos(angle)) * speed;
         }
     }
     
@@ -102,9 +108,7 @@ window.onload = function() {
     }
 
     function render(){
-        game.debug.text(Math.sin(Phaser.Math.angleBetweenPoints(player,planet)),100,100);
-        game.debug.text(Math.cos(Phaser.Math.angleBetweenPoints(player,planet)),100,200);
-        game.debug.text(player.body.force.x,100,300);
+
     }
 
 };
