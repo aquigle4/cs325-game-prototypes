@@ -20,6 +20,7 @@ window.onload = function() {
         game.load.image( 'camera', 'assets/Camera.png' );
         game.load.image('smug', 'assets/smugbg.png');
         game.load.image('brick', 'assets/brick.png');
+        game.load.image('blue', 'assets/blueTint.png');
     }
     
  
@@ -30,6 +31,8 @@ window.onload = function() {
     var lightCanvas;
     var bg;
     var detectionCanvas;
+    var detectionMaskCanvas;
+    var compoundMask;
     //Game Objects
     let player;
     let wallSprite;
@@ -66,9 +69,29 @@ window.onload = function() {
 		// pushing the newly created box into polygons array
 		polygons.push([[startX,startY],[startX+width,startY],[startX+width,startY+height],[startX,startY+height]]);
     }
+    
+    function createCamrea(x,y){
+        var visibility = createLightPolygon(x , y);
+        var camera = game.add.sprite(x,y,'camera');
+        cameras.push(camera);
+        
+        detectionCanvas.lineStyle(2, 0xff0000, 1);
+        detectionCanvas.beginFill(0xffffff,0.1); 
+        detectionCanvas.moveTo(visibility[0][0],visibility[0][1]);	
+        for(var i=1;i<=visibility.length;i++){
+            detectionCanvas.lineTo(visibility[i%visibility.length][0],visibility[i%visibility.length][1]);		
+        }
+        detectionCanvas.endFill();
+        
+        detectionMaskCanvas.beginFill(0x0000ff,0.3);
+        detectionMaskCanvas.drawCircle(x+16, y+16, 200);
+        detectionMaskCanvas.endFill();
+    }
     function create() {
         
         bg = game.add.tileSprite(0,0,8000,8000, 'smug');
+        //detectionMaskCanvas = game.add.tileSprite(0,0,8000,8000, 'blue');
+        
         player = game.add.sprite(125,125,'player');
         game.physics.startSystem(Phaser.Physics.Arcade);
         game.physics.enable(player);
@@ -80,17 +103,21 @@ window.onload = function() {
         lightCanvas = game.add.graphics(0,0);
         bg.mask = lightCanvas; 
         obstacleCanvas.lineStyle(1,0xffffff,1);
+        detectionCanvas = game.add.graphics(0,0);
+        detectionMaskCanvas = game.add.graphics(0,0);
+        detectionMaskCanvas.mask = detectionCanvas;
         
         // Wall Setup
         createWall(0,-10,5,9000,obstacleCanvas,true);
         createWall(-10,0,9000,5,obstacleCanvas,true);
         createWall(0,8000,9000,5,obstacleCanvas,true);
         createWall(8000,0,5,9000,obstacleCanvas,true);
-        createWall(500,5000,400,1000,obstacleCanvas,true);
+        createWall(500,500,400,1000,obstacleCanvas,true);
         createWall(400,10,250,250,obstacleCanvas,true);
         //createWall(100,100,100,100,obstacleCanvas);
         createWall(0,0,8000,8000,obstacleCanvas,false);
 
+        createCamrea(350,200);
         wallSprite = game.add.sprite(0,0);
         wallSprite.addChild(obstacleCanvas);
         game.physics.enable(wallSprite);
