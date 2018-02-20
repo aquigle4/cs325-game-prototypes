@@ -21,6 +21,7 @@ window.onload = function() {
         game.load.image('smug', 'assets/smugbg.png');
         game.load.image('brick', 'assets/brick.png');
         game.load.image('blue', 'assets/blueTint.png');
+        game.load.image('alphaMask','assets/AlphaMask.png');
     }
     
  
@@ -33,6 +34,8 @@ window.onload = function() {
     var detectionCanvas;
     var detectionMaskCanvas;
     var compoundMask;
+    var sightRangeMask;
+    
     //Game Objects
     let player;
     let wallSprite;
@@ -55,6 +58,7 @@ window.onload = function() {
     //float,float,float,float,Graphics canvas
     function createWall(startX,startY,width,height,obstacleCanvas,isFilled){
         obstacleCanvas.drawRect(startX, startY, width, height);
+        
         if(isFilled){
             var wall = game.add.tileSprite(startX,startY,width,height,'brick');
             game.physics.enable(wall);
@@ -74,11 +78,11 @@ window.onload = function() {
         var visibility = createLightPolygon(x , y);
         var camera = game.add.sprite(x,y,'camera');
         cameras.push(camera);
-        
+        compoundMask.add(camera);
         detectionCanvas.lineStyle(2, 0xff0000, 1);
         detectionCanvas.beginFill(0xffffff,0.1); 
         detectionCanvas.moveTo(visibility[0][0],visibility[0][1]);	
-        for(var i=1;i<=visibility.length;i++){
+        for(var i=0;i<=visibility.length;i++){
             detectionCanvas.lineTo(visibility[i%visibility.length][0],visibility[i%visibility.length][1]);		
         }
         detectionCanvas.endFill();
@@ -92,21 +96,32 @@ window.onload = function() {
         bg = game.add.tileSprite(0,0,8000,8000, 'smug');
         //detectionMaskCanvas = game.add.tileSprite(0,0,8000,8000, 'blue');
         
-        player = game.add.sprite(125,125,'player');
+        
         game.physics.startSystem(Phaser.Physics.Arcade);
+     
+        compoundMask = game.add.group();
+        //compoundMask.add(player);
+        //Canvas Graphics setup
+        obstacleCanvas = game.add.graphics(0,0);
+        compoundMask.add(obstacleCanvas);
+        lightCanvas = game.add.graphics(0,0);
+        bg.mask = lightCanvas; 
+        compoundMask.add(bg);
+        obstacleCanvas.lineStyle(0,0xffffff,1);
+        detectionCanvas = game.add.graphics(0,0);
+        detectionCanvas.lineStyle(1,0xffffff,1);
+        detectionMaskCanvas = game.add.graphics(0,0);
+        detectionMaskCanvas.lineStyle(1,0xffffff,1);
+        detectionMaskCanvas.mask = detectionCanvas;
+
+        //compoundMask.add(sightRangeMask);
+        compoundMask.mask = lightCanvas;
+        
+        
+        player = game.add.sprite(125,125,'player');
         game.physics.enable(player);
 
         game.camera.follow(player);
-        
-        //Canvas Graphics setup
-        obstacleCanvas = game.add.graphics(0,0);
-        lightCanvas = game.add.graphics(0,0);
-        bg.mask = lightCanvas; 
-        obstacleCanvas.lineStyle(1,0xffffff,1);
-        detectionCanvas = game.add.graphics(0,0);
-        detectionMaskCanvas = game.add.graphics(0,0);
-        detectionMaskCanvas.mask = detectionCanvas;
-        
         // Wall Setup
         createWall(0,-10,5,9000,obstacleCanvas,true);
         createWall(-10,0,9000,5,obstacleCanvas,true);
@@ -170,8 +185,40 @@ window.onload = function() {
             player.body.velocity.x = 200;
         }
     }
+    function cameraScan(){
+        for(var i = 0 ;i < cameras.length; i++){
+            let rayToPlayer = new Phaser.Line(cameras[i].x,cameras[i].y,player.x,player.y);
+            walls.forEach(function(wall){
+            var lines = [
+                new Phaser.Line(wall.x, wall.y, wall.x + wall.width, wall.y),
+                new Phaser.Line(wall.x, wall.y, wall.x, wall.y + wall.height),
+                new Phaser.Line(wall.x + wall.width, wall.y,
+                    wall.x + wall.width, wall.y + wall.height),
+                new Phaser.Line(wall.x, wall.y + wall.height,
+                    wall.x + wall.width, wall.y + wall.height)
+            ];
+            for(var i = 0; i < lines.length; i++) {
+                var intersect = Phaser.Line.intersects(rayToPlayer, lines[i]);
+                if (intersect) {
+                // Find the closest intersection
+                distance = this.game.math.distance(ray.start.x, ray.start.y, intersect.x, intersect.y);
+                    if (distance < distanceToWall) {
+                        distanceToWall = distance;
+                        closestIntersection = intersect;
+                    }
+                    if(distance < 1000){
+                        console.log(raycastHit);
+                    }
+                }
+            }
+           })
+        }
+        
+    }
     function update() {        
         move();
+        cameraScan();
+
     }
 
     function render(){
