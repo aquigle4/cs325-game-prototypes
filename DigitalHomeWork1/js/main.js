@@ -27,6 +27,8 @@ window.onload = function() {
     var player;
  
     var dirKeys;
+    
+
     function create() {
         
         game.physics.startSystem(Phaser.Physics.P2JS);
