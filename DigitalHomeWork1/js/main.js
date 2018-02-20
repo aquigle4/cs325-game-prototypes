@@ -16,7 +16,7 @@ window.onload = function() {
         // Image Loading
         game.load.image( 'logo', 'assets/phaser.png' );
         game.load.image( 'smug', 'assets/smugbg.png');
-        game.load.image( 'planet', 'assets/planet1.png');
+        game.load.image( 'planet', 'assets/Planet1.png');
         game.load.image( 'player', 'assets/spaceGEOLOGIST.png');
         game.load.image('space', 'assets/space.jpg');
         //Physics Loading
