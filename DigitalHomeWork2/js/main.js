@@ -372,7 +372,7 @@ window.onload = function() {
                     }
                 }
             }
-        if(isAlerted){
+        if((isAlerted)&& (!isInvisible)){
             alertLevel++;
         }else{
             if(alertLevel> 0){
