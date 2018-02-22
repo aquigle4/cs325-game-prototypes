@@ -200,7 +200,18 @@ window.onload = function() {
         createWall(1600,800,10,50,obstacleCanvas,true);
         createWall(1700,800,10,100,obstacleCanvas,true);
         createWall(1600,900,100,10,obstacleCanvas,true);
-       
+        
+//        createWall(1200,600,100,10,obstacleCanvas,true);
+//        createWall(1200,600,10,50,obstacleCanvas,true);
+//        createWall(1300,600,10,100,obstacleCanvas,true);
+//        createWall(1200,700,100,10,obstacleCanvas,true);
+//        c
+//        
+//        createWall(900,1000,100,10,obstacleCanvas,true);
+//        createWall(900,1000,10,50,obstacleCanvas,true);
+//        createWall(1000,1000,10,100,obstacleCanvas,true);
+//        createWall(900,1100,100,10,obstacleCanvas,true);
+        createWall(1400,600,5,800,obstacleCanvas,true);
         createWall(0,0,8000,8000,obstacleCanvas,false);
 
 
@@ -212,7 +223,7 @@ window.onload = function() {
         createCamera(2880,650,300,2180,680,100);
         createCamera(2180,950,300,2880,920,100);
         //End corridor Camera
-      
+        //createCamera(500,800,800,650,800);
         
         wallSprite = game.add.sprite(0,0);
         wallSprite.addChild(obstacleCanvas);
