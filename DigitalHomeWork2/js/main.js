@@ -26,13 +26,14 @@ window.onload = function() {
         game.load.image('alert','assets/alertBar.png');
         game.load.image('doorLocked','assets/DoorLocked.png');
         game.load.image('doorUnlocked','assets/DoorUnlocked.png');
+        game.load.image('playerInvis','assets/PlayerInvis.png');
     }
     
     
     var bitmap;
     
     var cursors;
-    
+    var spaceBar;
     //various Layer for lighting+ obstacles
     var obstacleCanvas;
     var lightCanvas;
@@ -56,7 +57,9 @@ window.onload = function() {
     var alertBar;
     var hasKey;
     var HUDKey;
-    
+    var isInvisible;
+    var invisbleBar;
+    var invisiblePower = 100;
     
     //this and a few other lighting related bits are form: http://www.emanueleferonato.com/2015/02/03/play-with-light-and-dark-using-ray-casting-and-visibility-polygons/
     function createLightPolygon(x,y){
@@ -220,12 +223,22 @@ window.onload = function() {
         alertBar = game.add.sprite(-50,-100,'alert');
         alertBar.height = 25;
         alertBar.width = 0;
+        alertBar.tint = "0xff0000";
+        invisbleBar = game.add.sprite (-50,-75,'alert');
+        
+        invisbleBar.height = 25;
+        invisbleBar.width = 0;
+        console.log(invisbleBar.height);
+        invisbleBar.tint = "0x6600ff";
+        
+        player.addChild(invisbleBar);
         player.addChild(alertBar);
         
         door = game.add.sprite(1400,700,'doorLocked');
         compoundMask.add(door);
+        game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR,Phaser.Keyboard.UP,Phaser.Keyboard.DOWN ]);
         cursors = game.input.keyboard.createCursorKeys();
-        
+        spaceBar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         game.world.setBounds(0,0,4800,3600);
 
         
@@ -255,24 +268,39 @@ window.onload = function() {
         }
         player.body.velocity.x = 0;
         player.body.velocity.y = 0;
+       
+       if(spaceBar.isDown){
+           if(invisiblePower >0){
+                isInvisible = true;
+                player.loadTexture('playerInvis');
+                invisiblePower--;
+               invisbleBar.width = Math.abs(100-invisiblePower)
+               
+            }
+        }else{
+            isInvisible = false;
+            player.loadTexture('player');
+        }
         
         game.physics.arcade.collide(player, obstacleCanvas);
-        if (cursors.up.isDown)
-        {
-            player.body.velocity.y = -200;
-        }
-        else if (cursors.down.isDown)
-        {
-            player.body.velocity.y = 200;
-        }
+        if(!isInvisible){
+            if (cursors.up.isDown)
+            {
+                player.body.velocity.y = -200;
+            }
+            else if (cursors.down.isDown)
+            {
+                player.body.velocity.y = 200;
+            }
 
-        if (cursors.left.isDown)
-        {
-            player.body.velocity.x = -200;
-        }
-        else if (cursors.right.isDown)
-        {
-            player.body.velocity.x = 200;
+            if (cursors.left.isDown)
+            {
+                player.body.velocity.x = -200;
+            }
+            else if (cursors.right.isDown)
+            {
+                player.body.velocity.x = 200;
+            }
         }
     }
     function cameraScan(){
@@ -310,7 +338,6 @@ window.onload = function() {
                         var intersect = Phaser.Line.intersects(rayToPlayer, lines[j]);
 
                         thereWasIntersect = false;
-
                         if (intersect) {
                             // Find the closest intersection
                             var distance = game.math.distance(rayToPlayer.start.x, rayToPlayer.start.y, intersect.x, intersect.y);
