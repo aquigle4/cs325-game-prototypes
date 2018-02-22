@@ -19,8 +19,8 @@ window.onload = function() {
         game.load.image( 'player', 'assets/Player.png' );
         game.load.image( 'key', 'assets/Key.png' );
         game.load.image( 'camera', 'assets/Camera.png' );
-        game.load.image('smug', 'assets/brick.png');
-        game.load.image('brick', 'assets/brick.png');
+        game.load.image('smug', 'assets/Brick.png');
+        game.load.image('brick', 'assets/Brick.png');
         game.load.image('blue', 'assets/blueTint.png');
         game.load.image('alphaMask','assets/AlphaMask.png');
         game.load.image('alert','assets/alertBar.png');
