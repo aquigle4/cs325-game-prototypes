@@ -85,14 +85,21 @@ window.onload = function() {
 		polygons.push([[startX,startY],[startX+width,startY],[startX+width,startY+height],[startX,startY+height]]);
     }
     
-    function createCamera(x,y,range= 200,patrolX = -1,patrolY = -1){
+    function createCamera(x,y,range= 200,patrolX = -1,patrolY = -1,speed = 20){
 
         var camera = game.add.sprite(x,y,'camera');
+        game.physics.enable(camera);
         camera.detectionCanvas = game.add.graphics(0,0);
         camera.detectionCanvas.lineStyle(1,0xffffff,0.3);
         camera.detectionMaskCanvas = game.add.graphics(0,0);
         camera.detectionMaskCanvas.lineStyle(1,0xffffff,0.3);
         camera.detectionMaskCanvas.mask = camera.detectionCanvas;
+        camera.patrolX = patrolX;
+        camera.patrolY = patrolY;
+        camera.startX = x;
+        camera.startY = y;
+        camera.speed = speed;
+        camera.patrolTo = true;
         compoundMask.add(camera.detectionMaskCanvas);
         camera.anchor.x = 0.5;
         camera.anchor.y = 0.5;
@@ -155,7 +162,7 @@ window.onload = function() {
 
         
         createCamera(350,200);
-        createCamera(1100,450)
+        createCamera(1100,450,200,1200,400);
 
         wallSprite = game.add.sprite(0,0);
         wallSprite.addChild(obstacleCanvas);
@@ -273,7 +280,22 @@ window.onload = function() {
                     isAlerted = true;   
                 }
             }
-        }
+            //Patrol The Cameras;
+            if(cameras[i].patrolX > -1){
+              
+                if(cameras[i].patrolTo){
+                    game.physics.arcade.moveToXY(cameras[i],cameras[i].patrolX,cameras[i].patrolY,cameras[i].speed);
+                    if(game.physics.arcade.distanceToXY(cameras[i],cameras[i].patrolX,cameras[i].patrolY) < 20){
+                        cameras[i].patrolTo = false;
+                    }
+                }else{
+                    game.physics.arcade.moveToXY(cameras[i],cameras[i].startX,cameras[i].startY,cameras[i].speed);
+                    if(game.physics.arcade.distanceToXY(cameras[i],cameras[i].startX,cameras[i].startY) < 20){
+                            cameras[i].patrolTo = true;
+                    }
+                    }
+                }
+            }
         if(isAlerted){
             alertLevel++;
         }else{
@@ -281,6 +303,7 @@ window.onload = function() {
                 alertLevel--;
             }
         }
+        
     }
     function handleAlert(){
         
