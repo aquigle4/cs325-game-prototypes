@@ -19,11 +19,13 @@ window.onload = function() {
         game.load.image( 'player', 'assets/Player.png' );
         game.load.image( 'key', 'assets/Key.png' );
         game.load.image( 'camera', 'assets/Camera.png' );
-        game.load.image('smug', 'assets/smugbg.png');
+        game.load.image('smug', 'assets/brick.png');
         game.load.image('brick', 'assets/brick.png');
         game.load.image('blue', 'assets/blueTint.png');
         game.load.image('alphaMask','assets/AlphaMask.png');
         game.load.image('alert','assets/alertBar.png');
+        game.load.image('doorLocked','assets/DoorLocked.png');
+        game.load.image('doorUnlocked','assets/DoorUnlocked.png');
     }
     
     
@@ -54,6 +56,8 @@ window.onload = function() {
     var alertBar;
     var hasKey;
     var HUDKey;
+    
+    
     //this and a few other lighting related bits are form: http://www.emanueleferonato.com/2015/02/03/play-with-light-and-dark-using-ray-casting-and-visibility-polygons/
     function createLightPolygon(x,y){
 		var segments = VisibilityPolygon.convertToSegments(polygons);
@@ -66,7 +70,7 @@ window.onload = function() {
 		return null;
 	}
     //float,float,float,float,Graphics canvas
-    function createWall(startX,startY,width,height,obstacleCanvas,isFilled){
+    function createWall(startX,startY,width,height,obstacleCanvas = obstacleCanvas,isFilled = true){
         obstacleCanvas.drawRect(startX, startY, width, height);
         
         if(isFilled){
@@ -124,13 +128,13 @@ window.onload = function() {
         lightCanvas = game.add.graphics(0,0);
         bg.mask = lightCanvas; 
         compoundMask.add(bg);
-        obstacleCanvas.lineStyle(1,0xffffff,1);
+        obstacleCanvas.lineStyle(1,0xffffff,0.1);
 
         //compoundMask.add(sightRangeMask);
         compoundMask.mask = lightCanvas;
         
         
-        player = game.add.sprite(1250,125,'player');
+        player = game.add.sprite(125,125,'player');
         game.physics.enable(player);
         player.anchor.x = 0.5;
         player.anchor.y = 0.5;
@@ -138,7 +142,7 @@ window.onload = function() {
         
 
         //Key and exit setup
-        key = game.add.sprite(400,400,'key');
+        key = game.add.sprite(2800,750,'key');
         key.scale.setTo(2,2);
         game.physics.enable(key);
         // Wall Setup
@@ -157,13 +161,56 @@ window.onload = function() {
         createWall(1000,460,5,10,obstacleCanvas,true);
         createWall(1000,480,5,10,obstacleCanvas,true);
         
-        //createWall(100,100,100,100,obstacleCanvas);
+        createWall(1020,400,5,10,obstacleCanvas,true);
+        createWall(1040,400,5,10,obstacleCanvas,true);
+        createWall(1060,400,5,10,obstacleCanvas,true);
+        createWall(1080,400,5,10,obstacleCanvas,true);
+        createWall(1100,400,5,10,obstacleCanvas,true);
+        
+        createWall(1300,10,50,300,obstacleCanvas,true);
+        createWall(1500,50,50,260,obstacleCanvas,true);
+        createWall(1900,10,10,300,obstacleCanvas,true);
+        //Camera 3 apature
+        createWall(1500,300,150,10,obstacleCanvas,true);
+        createWall(1750,300,150,10,obstacleCanvas,true);
+        //Hide behind
+        createWall(1650,450,100,10,obstacleCanvas,true);
+        
+        createWall(2100,0,10,700,obstacleCanvas,true);
+        createWall(2100,800,10,700,obstacleCanvas,true);
+        
+        createWall(2900,0,10,7000,obstacleCanvas,true);
+        createWall(0,1000,8000,10,obstacleCanvas,true);
+        createWall(2100,500,5000,10,obstacleCanvas,true);
+        //Key corridor walls
+        createWall(2200,700,100,10,obstacleCanvas,true);
+        createWall(2400,700,100,10,obstacleCanvas,true);
+        createWall(2600,700,100,10,obstacleCanvas,true);
+        createWall(2800,700,100,10,obstacleCanvas,true);
+        
+        createWall(2100,800,100,10,obstacleCanvas,true);
+        createWall(2300,800,100,10,obstacleCanvas,true);
+        createWall(2500,800,100,10,obstacleCanvas,true);
+        createWall(2700,800,100,10,obstacleCanvas,true);
+        //End Corridor Walls
+        createWall(1600,800,100,10,obstacleCanvas,true);
+        createWall(1600,800,10,50,obstacleCanvas,true);
+        createWall(1700,800,10,100,obstacleCanvas,true);
+        createWall(1600,900,100,10,obstacleCanvas,true);
+       
         createWall(0,0,8000,8000,obstacleCanvas,false);
+
 
         
         createCamera(350,200);
-        createCamera(1100,450,200,1200,400);
-
+        createCamera(1050,450,200,1200,400);
+        createCamera(1600,230,600,1900,230,60);
+        //Key Corridors Cameras
+        createCamera(2880,650,300,2180,680,100);
+        createCamera(2180,950,300,2880,920,100);
+        //End corridor Camera
+      
+        
         wallSprite = game.add.sprite(0,0);
         wallSprite.addChild(obstacleCanvas);
         game.physics.enable(wallSprite);
@@ -175,6 +222,8 @@ window.onload = function() {
         alertBar.width = 0;
         player.addChild(alertBar);
         
+        door = game.add.sprite(1400,700,'doorLocked');
+        compoundMask.add(door);
         cursors = game.input.keyboard.createCursorKeys();
         
         game.world.setBounds(0,0,4800,3600);
@@ -313,13 +362,14 @@ window.onload = function() {
             player.y = 125;
             alertLevel = 0;
             if(hasKey){
-                key = game.add.sprite(400,400,'key');
+                key = game.add.sprite(2800,750,'key');
                 game.physics.enable(key);
                 key.scale.setTo(2,2);
                 hasKey = false;
             }
         }
     }
+    var won = false;
     function update() {        
         move();
         cameraScan();
@@ -327,13 +377,20 @@ window.onload = function() {
         
         if((!hasKey) &&(player.overlap(key))){
             hasKey = true;
+            door.loadTexture('doorUnlocked',0);
             key.destroy();
+        }
+        if((hasKey)&& (player.overlap(door))){
+            if(!won){
+                game.add.text(1500,700,"You've Won!");
+            }
         }
 
     }
 
     function render(){
         game.debug.text('FPS: ' + game.time.fps || 'FPS: --', 40, 40, "#00ff00");
+        game.debug.text('X: ' + player.x + 'Y: ' + player.y, 40, 60, "#00ff00");
     }
 
 };
