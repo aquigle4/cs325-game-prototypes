@@ -23,9 +23,12 @@ window.onload = function() {
         game.load.image('brick', 'assets/brick.png');
         game.load.image('blue', 'assets/blueTint.png');
         game.load.image('alphaMask','assets/AlphaMask.png');
+        game.load.image('alert','assets/alertBar.png');
     }
     
- 
+    
+    var bitmap;
+    
     var cursors;
     
     //various Layer for lighting+ obstacles
@@ -48,7 +51,9 @@ window.onload = function() {
     let cameras = [];
     //Game Variables
     var alertLevel = 0;
-    
+    var alertBar;
+    var hasKey;
+    var HUDKey;
     //this and a few other lighting related bits are form: http://www.emanueleferonato.com/2015/02/03/play-with-light-and-dark-using-ray-casting-and-visibility-polygons/
     function createLightPolygon(x,y){
 		var segments = VisibilityPolygon.convertToSegments(polygons);
@@ -71,6 +76,7 @@ window.onload = function() {
             wall.body.immovable = true;
             wall.body.moves = false;
             game.physics.arcade.collide(player.body,wall.body);
+            compoundMask.add(wall);
             //Add the wall to the array of walls
             walls.push(wall);
         }
@@ -79,23 +85,21 @@ window.onload = function() {
 		polygons.push([[startX,startY],[startX+width,startY],[startX+width,startY+height],[startX,startY+height]]);
     }
     
-    function createCamrea(x,y,range= 200,patrolX = -1,patrolY = -1){
-        var visibility = createLightPolygon(x , y);
+    function createCamera(x,y,range= 200,patrolX = -1,patrolY = -1){
+
         var camera = game.add.sprite(x,y,'camera');
+        camera.detectionCanvas = game.add.graphics(0,0);
+        camera.detectionCanvas.lineStyle(1,0xffffff,0.3);
+        camera.detectionMaskCanvas = game.add.graphics(0,0);
+        camera.detectionMaskCanvas.lineStyle(1,0xffffff,0.3);
+        camera.detectionMaskCanvas.mask = camera.detectionCanvas;
+        compoundMask.add(camera.detectionMaskCanvas);
+        camera.anchor.x = 0.5;
+        camera.anchor.y = 0.5;
         camera.range = range;
         cameras.push(camera);
         compoundMask.add(camera);
-        detectionCanvas.lineStyle(2, 0xff0000, 1);
-        detectionCanvas.beginFill(0xffffff,0.1); 
-        detectionCanvas.moveTo(visibility[0][0],visibility[0][1]);	
-        for(var i=0;i<=visibility.length;i++){
-            detectionCanvas.lineTo(visibility[i%visibility.length][0],visibility[i%visibility.length][1]);		
-        }
-        detectionCanvas.endFill();
-        
-        detectionMaskCanvas.beginFill(0x0000ff,0.3);
-        detectionMaskCanvas.drawCircle(x+16, y+16, range*2);
-        detectionMaskCanvas.endFill();
+
     }
     function create() {
         
@@ -113,40 +117,63 @@ window.onload = function() {
         lightCanvas = game.add.graphics(0,0);
         bg.mask = lightCanvas; 
         compoundMask.add(bg);
-        obstacleCanvas.lineStyle(0,0xffffff,1);
-        detectionCanvas = game.add.graphics(0,0);
-        detectionCanvas.lineStyle(1,0xffffff,1);
-        detectionMaskCanvas = game.add.graphics(0,0);
-        detectionMaskCanvas.lineStyle(1,0xffffff,1);
-        detectionMaskCanvas.mask = detectionCanvas;
+        obstacleCanvas.lineStyle(1,0xffffff,1);
 
         //compoundMask.add(sightRangeMask);
         compoundMask.mask = lightCanvas;
         
         
-        player = game.add.sprite(125,125,'player');
+        player = game.add.sprite(1250,125,'player');
         game.physics.enable(player);
-
+        player.anchor.x = 0.5;
+        player.anchor.y = 0.5;
         game.camera.follow(player);
+        
+
+        //Key and exit setup
+        key = game.add.sprite(400,400,'key');
+        key.scale.setTo(2,2);
+        game.physics.enable(key);
         // Wall Setup
         createWall(0,-10,5,9000,obstacleCanvas,true);
         createWall(-10,0,9000,5,obstacleCanvas,true);
+        //Bounding walls
         createWall(0,8000,9000,5,obstacleCanvas,true);
         createWall(8000,0,5,9000,obstacleCanvas,true);
-        createWall(500,500,400,1000,obstacleCanvas,true);
+        createWall(0,500,2000,100,obstacleCanvas,true);
         createWall(400,10,250,250,obstacleCanvas,true);
+        
+                //Small walls demonstration
+        createWall(1000,400,5,10,obstacleCanvas,true);
+        createWall(1000,420,5,10,obstacleCanvas,true);
+        createWall(1000,440,5,10,obstacleCanvas,true);
+        createWall(1000,460,5,10,obstacleCanvas,true);
+        createWall(1000,480,5,10,obstacleCanvas,true);
+        
         //createWall(100,100,100,100,obstacleCanvas);
         createWall(0,0,8000,8000,obstacleCanvas,false);
 
-        createCamrea(350,200);
+        
+        createCamera(350,200);
+        createCamera(1100,450)
+
         wallSprite = game.add.sprite(0,0);
         wallSprite.addChild(obstacleCanvas);
         game.physics.enable(wallSprite);
         game.physics.arcade.collide(player.body,wallSprite);
         
+        //Alert bar setup
+        alertBar = game.add.sprite(-50,-100,'alert');
+        alertBar.height = 25;
+        alertBar.width = 0;
+        player.addChild(alertBar);
+        
         cursors = game.input.keyboard.createCursorKeys();
         
         game.world.setBounds(0,0,4800,3600);
+
+        
+
 
     }
     
@@ -164,6 +191,7 @@ window.onload = function() {
             }
             lightCanvas.endFill();
         }catch(err){
+            lightCanvas.endFill();
             console.log(err);
         }
         for(var i =0; i <walls.length; i++){
@@ -192,34 +220,92 @@ window.onload = function() {
         }
     }
     function cameraScan(){
+        var isAlerted = false;
+        var thereWasIntersect = false;
         for(var i = 0 ;i < cameras.length; i++){
-            let rayToPlayer = new Phaser.Line(cameras[i].x,cameras[i].y,player.x,player.y);
-            walls.forEach(function(wall){
-            var lines = [
-                new Phaser.Line(wall.x, wall.y, wall.x + wall.width, wall.y),
-                new Phaser.Line(wall.x, wall.y, wall.x, wall.y + wall.height),
-                new Phaser.Line(wall.x + wall.width, wall.y,
-                    wall.x + wall.width, wall.y + wall.height),
-                new Phaser.Line(wall.x, wall.y + wall.height,
-                    wall.x + wall.width, wall.y + wall.height)
-            ];
-            for(var j = 0; j < lines.length; j++) {
-                var intersect = Phaser.Line.intersects(rayToPlayer, lines[j]);
-                if (intersect) {
-                    // Find the closest intersection
-                    var distance = game.math.distance(rayToPlayer.start.x, rayToPlayer.start.y, intersect.x, intersect.y);
+            //Rendering
+                var visibility = createLightPolygon(cameras[i].x , cameras[i].y);
+                cameras[i].detectionCanvas.clear();
+                cameras[i].detectionCanvas.beginFill(0xffffff,0.1); 
+                cameras[i].detectionCanvas.moveTo(visibility[0][0],visibility[0][1]);	
+                for(var g=0;g<=visibility.length;g++){
+                    cameras[i].detectionCanvas.lineTo(visibility[g%visibility.length][0],visibility[g%visibility.length][1]);		
                 }
-                else if((!intersect) && (rayToPlayer.length < cameras[i].range)){
-                    console.log("yeet");
+                cameras[i].detectionCanvas.endFill();
+                cameras[i].detectionMaskCanvas.clear();
+                cameras[i].detectionMaskCanvas.beginFill(0x0000ff,0.3);
+                cameras[i].detectionMaskCanvas.drawCircle(cameras[i].x+16, cameras[i].y+16, cameras[i].range*2);
+                cameras[i].detectionMaskCanvas.endFill();
+            
+            
+            //Raycast actual scanning
+            let rayToPlayer = new Phaser.Line(cameras[i].x,cameras[i].y,player.x,player.y);
+            try{
+                walls.forEach(function(wall){
+                    var lines = [
+                        new Phaser.Line(wall.x, wall.y, wall.x + wall.width, wall.y),
+                        new Phaser.Line(wall.x, wall.y, wall.x, wall.y + wall.height),
+                        new Phaser.Line(wall.x + wall.width, wall.y,
+                            wall.x + wall.width, wall.y + wall.height),
+                        new Phaser.Line(wall.x, wall.y + wall.height,
+                            wall.x + wall.width, wall.y + wall.height)
+                    ];
+                    for(var j = 0; j < lines.length; j++) {
+                        var intersect = Phaser.Line.intersects(rayToPlayer, lines[j]);
+
+                        thereWasIntersect = false;
+
+                        if (intersect) {
+                            // Find the closest intersection
+                            var distance = game.math.distance(rayToPlayer.start.x, rayToPlayer.start.y, intersect.x, intersect.y);
+                            //console.log('yee');
+                            thereWasIntersect = true;
+                            throw breakException;
+                            break;
+                        }
+                    }
+               })
+            }
+            catch(e){}
+            
+            if(!thereWasIntersect){
+                if(rayToPlayer.length < cameras[i].range){
+                    isAlerted = true;   
                 }
             }
-           })
         }
+        if(isAlerted){
+            alertLevel++;
+        }else{
+            if(alertLevel> 0){
+                alertLevel--;
+            }
+        }
+    }
+    function handleAlert(){
         
+        alertBar.width = alertLevel;
+        if(alertLevel >= 100){
+            player.x = 125;
+            player.y = 125;
+            alertLevel = 0;
+            if(hasKey){
+                key = game.add.sprite(400,400,'key');
+                game.physics.enable(key);
+                key.scale.setTo(2,2);
+                hasKey = false;
+            }
+        }
     }
     function update() {        
         move();
         cameraScan();
+        handleAlert();
+        
+        if((!hasKey) &&(player.overlap(key))){
+            hasKey = true;
+            key.destroy();
+        }
 
     }
 

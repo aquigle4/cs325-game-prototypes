@@ -26,8 +26,8 @@ body
 <body>
 <div id="game"></div>
 <div id="readme">
-<h2>Space Geology</h2>
-<h3> Left/Right Arrow keys to go counterclockwise/clockwise around the planet, and up arrow key to jump away.</h3>
+<h2>Caught</h2>
+<h3> All of the arrow keys to navigate, Don't stay in the line of sight of cameras for to long or you'll go back to the beginning.Collect Keys and get to the end.</h3>
 <ul>
 <li><strong>Originality:</strong>
 
@@ -35,32 +35,34 @@ body
 
 <li><strong>Technical Merit:</strong>
 What is interesting about your game technology?<br>
-    Simulating Gravitational pull and moving around (atleast the top half) of the planet normally.
+    A lot of raycast/lighting work. in getting the camera line of sight to work and the lighting to work in a way that didn't break the frame rate;
 </li>
 
 <li><strong>Prototype Postmortem:</strong>
 What did you learn from this prototype?<br>
-    Basics of phaser, p2 physics, p2 polygon collider data
+    Graphical Masking, a lot of wrestling with javascript being for trash people.
 What was the easiest or hardest part of making it?<br>
-    A lot of trig math
+    The Hardest part was defintly getting all the graphics layers masked correctly (I've still got a problem with the detection bar being under things);
 </li>
 
 <li><strong>Prototype Assets:</strong>
 Did you make your prototype assets from scratch? Did you borrow them? Cite your sources here.
+    
 <ul>
-
-    Space Background: https://i.ytimg.com/vi/T40NSkd7Olc/maxresdefault.jpg<br>
-    Everything else is done with Piskel.
+    <li>
+    Most of the Visibility id done with The visibility polygon script from: http://www.emanueleferonato.com/2015/02/03/play-with-light-and-dark-using-ray-casting-and-visibility-polygons/</li><br>
+    <li>Everything else is done with Piskel.</li><br>
+    <li>I referenced some of the phaser tutorials as well as the <a href = "https://gamemechanicexplorer.com/#raycasting-1">GME page on raycasting </a></li>
 </ul>
 </li>
 
 <li><strong>Prototype Closest Other Game:</strong>
 Which other game most closely resembles your game? If you are borrowing code from a Phaser Example, you must say so here. If you borrow code from elsewhere, you must say so here.<br>
-    I'm using a little bit of code from the "Accelerate to object" phaser p2 example, and while I don't think I copy-pasted any code I did use a few examples from <br> Various p2 Polygon physics examples.
+    As I stated before I'm using bits an peices from phaser examples (mainly for references);
 </li>
 
 <li><strong>High Concept:</strong>
-The plan is to have space person collect space rocks
+You're little cloak dude, escape from wherever, You can go invisible to try and avoid the cameras.
 </li>
 
 <li><strong>Theme:</strong>
@@ -68,11 +70,11 @@ The plan is to have space person collect space rocks
 </li>
 
 <li><strong>Mandated Variety:</strong>
-    none
+    Direct-keyboard/Deterministic (Though I'd perfer to have the levels vary in some way)/Collector-Explorer/Overhead-stealth-adventure?
 </li>
 
 <li><strong>Prototype Goal:</strong>
-    Most of it was just trying to get moving around the planetoid to work, let alone do so in a satisfying manner.
+    When I saw the theme "Caught" I knew I wanted to make a stealth game with proper visiblity simulation, kind-of threw together game mechanics on the basis of visiblity
 </li>
 
 <li><strong>Player Experience Goals:</strong>
@@ -80,15 +82,15 @@ What experience do you want players to have when playing your game?
 </li>
 
 <li><strong>Gameplay:</strong>
-    The idea is to have the player on this planetoid and have falling meteroids/meteors that they have to avoid being hit by as they fall, than collect once they've settled, but I don't have the meteors in yet, so it's just a movement prototype.
+    I'd like to have the players un-sure of what the next room is going to hold and have them very carefully plan their invisiblity as the cameras patrol around.
 </li>
 
 <li><strong>Strategies:</strong>
-Bob and weave, The meteors would spawn pretty high up and randomly so it's a bad idea to 'jump/float' to far or one might spawn on top of you
+    Identify blindspots, exploit them, even if cameras check them out for a short second, you can survive it/invisibility through it.
 </li>
 
 <li><strong>Story/Setting/Premise:</strong>
-You are a space geologist, and for some divinly mandated reason, this prototype must be about you, doing geology things, in space.
+Again, you are the Intrepid cloak man, have you already been caught and are trying to escape? or are you trying to evade capture in the first place?
 </li>
 
 <li><strong>Target Audience:</strong>
@@ -97,11 +99,18 @@ The students, TAs and Teacher of CS325 at george mason university.
 
 <li><strong>Play Time:</strong>
 How long does your game take to play?<br>
-    The plan is for there to be a minute~ timer to collect as many space rocks as possible.
+    Three or four minutes for this first level
 </li>
 
 </ul>
 
+    <ol>
+    <strong> TODO:</strong>
+        <li>More advanced movements of the cameras</li>
+        <li>Add some max sight range darkness (GME had some stuff on this)</li>
+        <li>Better HUD Elements</li>
+        <li>More/randomized/procedural levels</li>
+    </ol>
 </div>
 </body>
 </html>
