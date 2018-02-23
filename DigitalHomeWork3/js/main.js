@@ -318,23 +318,26 @@ window.onload = function() {
         var isAlerted = false;
         var thereWasIntersect = false;
         for(var i = 0 ;i < cameras.length; i++){
-            //Rendering
-                var visibility = createLightPolygon(cameras[i].x , cameras[i].y);
-                cameras[i].detectionCanvas.clear();
-                cameras[i].detectionCanvas.beginFill(0xffffff,0.1); 
-                cameras[i].detectionCanvas.moveTo(visibility[0][0],visibility[0][1]);	
-                for(var g=0;g<=visibility.length;g++){
-                    cameras[i].detectionCanvas.lineTo(visibility[g%visibility.length][0],visibility[g%visibility.length][1]);		
-                }
-                cameras[i].detectionCanvas.endFill();
-                cameras[i].detectionMaskCanvas.clear();
-                cameras[i].detectionMaskCanvas.beginFill(0x0000ff,0.3);
-                cameras[i].detectionMaskCanvas.drawCircle(cameras[i].x+16, cameras[i].y+16, cameras[i].range*2);
-                cameras[i].detectionMaskCanvas.endFill();
-            
+		let rayToPlayer = new Phaser.Line(cameras[i].x,cameras[i].y,player.x,player.y);
+            	if(rayToPlayer.length < cameras[i].range + 800){
+			//Rendering
+			var visibility = createLightPolygon(cameras[i].x , cameras[i].y);
+			cameras[i].detectionCanvas.clear();
+			cameras[i].detectionCanvas.beginFill(0xffffff,0.1); 
+			cameras[i].detectionCanvas.moveTo(visibility[0][0],visibility[0][1]);	
+			for(var g=0;g<=visibility.length;g++){
+			    cameras[i].detectionCanvas.lineTo(visibility[g%visibility.length][0],visibility[g%visibility.length][1]);		
+			}
+			cameras[i].detectionCanvas.endFill();
+			cameras[i].detectionMaskCanvas.clear();
+			cameras[i].detectionMaskCanvas.beginFill(0x0000ff,0.3);
+			cameras[i].detectionMaskCanvas.drawCircle(cameras[i].x+16, cameras[i].y+16, cameras[i].range*2);
+			cameras[i].detectionMaskCanvas.endFill();
+		}
             
             //Raycast actual scanning
-            let rayToPlayer = new Phaser.Line(cameras[i].x,cameras[i].y,player.x,player.y);
+            
+	   if(rayToPlayer.length < cameras[i].range){
             try{
                 walls.forEach(function(wall){
                     var lines = [
@@ -367,6 +370,7 @@ window.onload = function() {
                     isAlerted = true;   
                 }
             }
+	   }
             //Patrol The Cameras;
             if(cameras[i].patrolX > -1){
               
