@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Quigley Homework 3</title>
+    <script src="js/phaser.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/visibility_polygon.js"></script>
+
+<style>
+body
+{
+    color: #777;
+    font-family: "Avenir", Verdana, sans-serif;
+    max-width: 1200px;
+    margin: auto;
+    text-align: center;
+}
+#readme
+{
+    margin-top: 10px;
+}
+</style>
+
+</head>
+<body>
+<div align= "center" id="game"></div>
+<div id="readme">
+<h2>Caught</h2>
+<h3> All of the arrow keys to navigate and spacebar to go invisible, Don't stay in the line of sight of cameras for to long or you'll go back to the beginning.Collect Keys and get to the end. And be sparing with your invisilbity, once you've used to much you can't do it any more.</h3>
+<ul>
+<li><strong>Originality:</strong>
+
+</li>
+
+<li><strong>Technical Merit:</strong>
+What is interesting about your game technology?<br>
+    A lot of raycast/lighting work. in getting the camera line of sight to work and the lighting to work in a way that didn't break the frame rate;
+</li>
+
+<li><strong>Prototype Postmortem:</strong>
+What did you learn from this prototype?<br>
+    Graphical Masking, a lot of wrestling with javascript being finiky.
+What was the easiest or hardest part of making it?<br>
+    The Hardest part was defintly getting all the graphics layers masked correctly (I've still got a problem with the detection bar being under things); And dealing with the raycast implementation being inefficient
+</li>
+
+<li><strong>Prototype Assets:</strong>
+Did you make your prototype assets from scratch? Did you borrow them? Cite your sources here.
+    
+<ul>
+    <li>
+    Most of the Visibility id done with The visibility polygon script from: http://www.emanueleferonato.com/2015/02/03/play-with-light-and-dark-using-ray-casting-and-visibility-polygons/</li><br>
+    <li>Everything else is done with Piskel.</li><br>
+    <li>I referenced some of the phaser tutorials as well as the <a href = "https://gamemechanicexplorer.com/#raycasting-1">GME page on raycasting </a></li>
+</ul>
+</li>
+
+<li><strong>Prototype Closest Other Game:</strong>
+Which other game most closely resembles your game? If you are borrowing code from a Phaser Example, you must say so here. If you borrow code from elsewhere, you must say so here.<br>
+    As I stated before I'm using bits an peices from phaser examples (mainly for references);
+</li>
+
+<li><strong>High Concept:</strong>
+You're little cloak dude, escape from wherever, You can go invisible to try and avoid the cameras.
+</li>
+
+<li><strong>Theme:</strong>
+    n/a
+</li>
+
+<li><strong>Mandated Variety:</strong>
+    Direct-keyboard/Deterministic (Though I'd perfer to have the levels vary in some way)/Collector-Explorer/Overhead-stealth-adventure?
+</li>
+
+<li><strong>Prototype Goal:</strong>
+    When I saw the theme "Caught" I knew I wanted to make a stealth game with proper visiblity simulation, kind-of threw together game mechanics on the basis of visiblity
+</li>
+
+<li><strong>Player Experience Goals:</strong>
+What experience do you want players to have when playing your game?
+</li>
+
+<li><strong>Gameplay:</strong>
+    I'd like to have the players un-sure of what the next room is going to hold and have them very carefully plan their invisiblity as the cameras patrol around.
+</li>
+
+<li><strong>Strategies:</strong>
+    Identify blindspots, exploit them, even if cameras check them out for a short second, you can survive it/invisibility through it.
+</li>
+
+<li><strong>Story/Setting/Premise:</strong>
+Again, you are the Intrepid cloak man, have you already been caught and are trying to escape? or are you trying to evade capture in the first place?
+</li>
+
+<li><strong>Target Audience:</strong>
+The students, TAs and Teacher of CS325 at george mason university.
+</li>
+
+<li><strong>Play Time:</strong>
+How long does your game take to play?<br>
+    Two or three minutes for this first level
+</li>
+
+</ul>
+
+    <ol>
+    <strong> TODO:</strong>
+        <li>More advanced movements of the cameras</li>
+        <li>Add some max sight range darkness (GME had some stuff on this)</li>
+        <li>Better HUD Elements</li>
+        <li>More/randomized/procedural levels</li>
+    </ol>
+</div>
+</body>
+</html>
