@@ -242,7 +242,7 @@ window.onload = function() {
         game.physics.enable(key);
         compoundMask.add(key);
         currentStart.x = 1400;
-        currentStart.y = 800;
+        currentStart.y = 850;
         door = game.add.sprite(1250,850,'doorLocked');
         compoundMask.add(door);;
         
@@ -250,15 +250,22 @@ window.onload = function() {
 
     }
     function clearLevel(){
+        obstacleCanvas.clear();
+        obstacleCanvas.lineStyle(1,0xffffff,0.1);
         walls.forEach(function(wall){
-            wall.destroy;
+            wall.destroy();
         })
         walls = [];
         cameras.forEach(function (camera){
-            camera.destroy;
+            camera.detectionCanvas.clear();
+            camera.detectionMaskCanvas.clear();
+            
+            camera.destroy();
         })
         cameras = [];
+        polygons = [];
         hasKey = false;
+        
         door.destroy;
     }
     function create() {
