@@ -27,6 +27,7 @@ window.onload = function() {
         game.load.image('doorLocked','assets/DoorLocked.png');
         game.load.image('doorUnlocked','assets/DoorUnlocked.png');
         game.load.image('playerInvis','assets/PlayerInvis.png');
+        game.load.image('Vision','assets/Vison.png');
     }
     
     
@@ -59,8 +60,11 @@ window.onload = function() {
     var HUDKey;
     var isInvisible;
     var invisbleBar;
+    var lightingMask;
     var invisiblePower = 100;
     
+    
+    var currentStart = [];
     //this and a few other lighting related bits are form: http://www.emanueleferonato.com/2015/02/03/play-with-light-and-dark-using-ray-casting-and-visibility-polygons/
     function createLightPolygon(x,y){
 		var segments = VisibilityPolygon.convertToSegments(polygons);
@@ -115,39 +119,8 @@ window.onload = function() {
         compoundMask.add(camera);
 
     }
-    function create() {
+    function loadLevel1(){
         
-        bg = game.add.tileSprite(0,0,8000,8000, 'smug');
-        //detectionMaskCanvas = game.add.tileSprite(0,0,8000,8000, 'blue');
-        
-        
-        game.physics.startSystem(Phaser.Physics.Arcade);
-     
-        compoundMask = game.add.group();
-        //compoundMask.add(player);
-        //Canvas Graphics setup
-        obstacleCanvas = game.add.graphics(0,0);
-        compoundMask.add(obstacleCanvas);
-        lightCanvas = game.add.graphics(0,0);
-        bg.mask = lightCanvas; 
-        compoundMask.add(bg);
-        obstacleCanvas.lineStyle(1,0xffffff,0.1);
-
-        //compoundMask.add(sightRangeMask);
-        compoundMask.mask = lightCanvas;
-        
-        
-        player = game.add.sprite(125,125,'player');
-        game.physics.enable(player);
-        player.anchor.x = 0.5;
-        player.anchor.y = 0.5;
-        game.camera.follow(player);
-        
-
-        //Key and exit setup
-        key = game.add.sprite(2800,750,'key');
-        key.scale.setTo(2,2);
-        game.physics.enable(key);
         // Wall Setup
         createWall(0,-10,5,9000,obstacleCanvas,true);
         createWall(-10,0,9000,5,obstacleCanvas,true);
@@ -157,7 +130,7 @@ window.onload = function() {
         createWall(0,500,2000,100,obstacleCanvas,true);
         createWall(400,10,250,250,obstacleCanvas,true);
         
-                //Small walls demonstration
+        //Small walls demonstration
         createWall(1000,400,5,10,obstacleCanvas,true);
         createWall(1000,420,5,10,obstacleCanvas,true);
         createWall(1000,440,5,10,obstacleCanvas,true);
@@ -200,17 +173,7 @@ window.onload = function() {
         createWall(1600,800,10,50,obstacleCanvas,true);
         createWall(1700,800,10,100,obstacleCanvas,true);
         createWall(1600,900,100,10,obstacleCanvas,true);
-        
-//        createWall(1200,600,100,10,obstacleCanvas,true);
-//        createWall(1200,600,10,50,obstacleCanvas,true);
-//        createWall(1300,600,10,100,obstacleCanvas,true);
-//        createWall(1200,700,100,10,obstacleCanvas,true);
-//        c
-//        
-//        createWall(900,1000,100,10,obstacleCanvas,true);
-//        createWall(900,1000,10,50,obstacleCanvas,true);
-//        createWall(1000,1000,10,100,obstacleCanvas,true);
-//        createWall(900,1100,100,10,obstacleCanvas,true);
+
         createWall(1400,600,5,800,obstacleCanvas,true);
         createWall(0,0,8000,8000,obstacleCanvas,false);
 
@@ -223,7 +186,112 @@ window.onload = function() {
         createCamera(2880,650,300,2180,680,100);
         createCamera(2180,950,300,2880,920,100);
         //End corridor Camera
-        //createCamera(500,800,800,650,800);
+        //createCamera(500,800,800,650,800)
+        
+                //Key and exit setup
+        key = game.add.sprite(2800,750,'key');
+        key.scale.setTo(2,2);
+        game.physics.enable(key);
+        compoundMask.add(key);
+        door = game.add.sprite(1400,700,'doorLocked');
+        compoundMask.add(door);
+        currentStart.x = 125;
+        currentStart.y = 125;
+    }
+    function loadLevel2(){
+        // Wall Setup
+        createWall(0,-10,5,9000,obstacleCanvas,true);
+        createWall(-10,0,9000,5,obstacleCanvas,true);
+        //Bounding walls
+        createWall(0,8000,9000,5,obstacleCanvas,true);
+        createWall(8000,0,5,9000,obstacleCanvas,true);
+        
+        
+        createWall(1000,700,500,5,obstacleCanvas,true);
+        createWall(300,700,300,5,obstacleCanvas,true);
+        
+        createWall(1500,0,5,5000,obstacleCanvas,true);
+        //Camera 0 blocker
+        createWall(350,0,2,1100,obstacleCanvas,true);
+        
+        createWall(1200,800,100,10,obstacleCanvas,true);
+        createWall(1200,800,10,50,obstacleCanvas,true);
+        createWall(1300,800,10,100,obstacleCanvas,true);
+        createWall(1200,900,100,10,obstacleCanvas,true);
+        
+        createWall(900,600,100,10,obstacleCanvas,true);
+        createWall(900,600,10,100,obstacleCanvas,true);
+        createWall(1000,300,10,400,obstacleCanvas,true);
+        createWall(700,700,250,10,obstacleCanvas,true);
+        
+        createWall(700,0,100,10,obstacleCanvas,true);
+        createWall(700,0,10,100,obstacleCanvas,true);
+        createWall(800,50,10,50,obstacleCanvas,true);
+        createWall(700,100,50,10,obstacleCanvas,true);
+        
+        createWall(0,1000,3000,10,obstacleCanvas,true);
+        createWall(450,200,5,150,obstacleCanvas,true);
+        createWall(600,600,200,5,obstacleCanvas,true);
+        //Cameras
+        createCamera(400,750,900,300,750);
+        createCamera(500,100,400,1000,600,150);
+        
+        //Key and exit setup
+        key = game.add.sprite(1200,650,'key');
+        key.scale.setTo(2,2);
+        game.physics.enable(key);
+        compoundMask.add(key);
+        currentStart.x = 1400;
+        currentStart.y = 800;
+        door = game.add.sprite(1250,850,'doorLocked');
+        compoundMask.add(door);;
+        
+        createWall(0,0,8000,8000,obstacleCanvas,false);
+
+    }
+    function clearLevel(){
+        walls.forEach(function(wall){
+            wall.destroy;
+        })
+        walls = [];
+        cameras.forEach(function (camera){
+            camera.destroy;
+        })
+        cameras = [];
+        hasKey = false;
+        door.destroy;
+    }
+    function create() {
+        
+        bg = game.add.tileSprite(0,0,8000,8000, 'smug');
+        //detectionMaskCanvas = game.add.tileSprite(0,0,8000,8000, 'blue');
+        
+
+        
+        game.physics.startSystem(Phaser.Physics.Arcade);
+     
+        compoundMask = game.add.group();
+        //compoundMask.add(player);
+        //Canvas Graphics setup
+        obstacleCanvas = game.add.graphics(0,0);
+        compoundMask.add(obstacleCanvas);
+        lightCanvas = game.add.graphics(0,0);
+        bg.mask = lightCanvas; 
+        compoundMask.add(bg);
+        obstacleCanvas.lineStyle(1,0xffffff,0.1);
+
+        //compoundMask.add(sightRangeMask);
+        compoundMask.mask = lightCanvas;
+        
+        
+        player = game.add.sprite(125,125,'player');
+        game.physics.enable(player);
+        player.anchor.x = 0.5;
+        player.anchor.y = 0.5;
+        game.camera.follow(player);
+        
+
+
         
         wallSprite = game.add.sprite(0,0);
         wallSprite.addChild(obstacleCanvas);
@@ -236,25 +304,27 @@ window.onload = function() {
         alertBar.width = 0;
         alertBar.tint = "0xff0000";
         invisbleBar = game.add.sprite (-50,-75,'alert');
+        lightingMask = game.add.sprite(0,0,'Vision')
+        lightingMask.anchor.x = 0.5;
+        lightingMask.anchor.y = 0.5;
         
         invisbleBar.height = 25;
         invisbleBar.width = 0;
-        console.log(invisbleBar.height);
         invisbleBar.tint = "0x6600ff";
         
+        player.addChild(lightingMask);
         player.addChild(invisbleBar);
         player.addChild(alertBar);
         
-        door = game.add.sprite(1400,700,'doorLocked');
-        compoundMask.add(door);
+
         game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR,Phaser.Keyboard.UP,Phaser.Keyboard.DOWN ]);
         cursors = game.input.keyboard.createCursorKeys();
         spaceBar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         game.world.setBounds(0,0,4800,3600);
 
         
-
-
+        //finnaly load the level
+        loadLevel2();
     }
     
     function move(){
@@ -319,7 +389,8 @@ window.onload = function() {
         var thereWasIntersect = false;
         for(var i = 0 ;i < cameras.length; i++){
 		let rayToPlayer = new Phaser.Line(cameras[i].x,cameras[i].y,player.x,player.y);
-        Sif(rayToPlayer.length < cameras[i].range + 800){
+        if(rayToPlayer.length < cameras[i].range + 800){
+            
 			//Rendering
 			var visibility = createLightPolygon(cameras[i].x , cameras[i].y);
 			cameras[i].detectionCanvas.clear();
@@ -338,6 +409,7 @@ window.onload = function() {
             //Raycast actual scanning
             
 	   if(rayToPlayer.length < cameras[i].range){
+          
             try{
                 walls.forEach(function(wall){
                     var lines = [
@@ -400,13 +472,14 @@ window.onload = function() {
         
         alertBar.width = alertLevel;
         if(alertLevel >= 100){
-            player.x = 125;
-            player.y = 125;
+            player.x = currentStart.x;
+            player.y = currentStart.y;
             alertLevel = 0;
             if(hasKey){
                 key = game.add.sprite(2800,750,'key');
                 game.physics.enable(key);
                 key.scale.setTo(2,2);
+                invisiblePower = 100;
                 hasKey = false;
             }
         }
