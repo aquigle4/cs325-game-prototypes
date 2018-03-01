@@ -324,7 +324,7 @@ window.onload = function() {
 
         
         //finnaly load the level
-        loadLevel2();
+        loadLevel1();
     }
     
     function move(){
@@ -497,7 +497,8 @@ window.onload = function() {
         }
         if((hasKey)&& (player.overlap(door))){
             if(!won){
-                game.add.text(1500,700,"You've Won!");
+                clearLevel();
+                loadLevel2();
             }
         }
 
