@@ -319,7 +319,7 @@ window.onload = function() {
         var thereWasIntersect = false;
         for(var i = 0 ;i < cameras.length; i++){
 		let rayToPlayer = new Phaser.Line(cameras[i].x,cameras[i].y,player.x,player.y);
-        Sif(rayToPlayer.length < cameras[i].range + 800){
+        if(rayToPlayer.length < cameras[i].range + 800){
 			//Rendering
 			var visibility = createLightPolygon(cameras[i].x , cameras[i].y);
 			cameras[i].detectionCanvas.clear();
