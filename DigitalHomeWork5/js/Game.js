@@ -3,31 +3,31 @@
 GameStates.makeGame = function( game, shared ) {
     // Create your own variables.
     var teapot;
-    var ownedTeapots;
+    var ownedTeapots = 0;
     var teaPotBaseCost = 2;
     var teaPotCost = 2;
     var teaPotRate = 0.1;
     
     var telly;
-    var ownedTellies;
+    var ownedTellies = 0;
     var tellyBaseCost = 50;
     var tellyCost = 50;
     var tellyRate = 2;
     
     var pub;
-    var ownedPubs;
+    var ownedPubs = 0;
     var pubBaseCost = 750;
     var pubCost = 750;
     var pubRate = 15;
     
     var henge;
-    var ownedHenges;
+    var ownedHenges = 0;
     var hengeBaseCost = 3000;
     var hengeCost = 3000;
     var hengeRate = 125;
     
     var cricketTeam;
-    var ownedCricketTeams;
+    var ownedCricketTeams  = 0;
     var cricketTeamBaseCost = 12500;
     var cricketTeamCost = 12500;
     var cricketTeamRate = 1000;
