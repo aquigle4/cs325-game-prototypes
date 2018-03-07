@@ -60,7 +60,7 @@ GameStates.makeGame = function( game, shared ) {
             
             scoreText = "GBP: " + score;
             var style = { font: "65px Arial", fill: "#000044", align: "center" };
-            scoreTextObj = game.add.text(game.world.centerX-300, 0, scoreText,style);
+            scoreTextObj = game.add.text(150, 150, scoreText,style);
             
         },
     
