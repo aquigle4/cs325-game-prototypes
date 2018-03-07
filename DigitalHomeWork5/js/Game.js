@@ -20,7 +20,7 @@ GameStates.makeGame = function( game, shared ) {
         create: function () {
             teapot = game.add.sprite(64,64,'teapot');
             boil = teapot.animations.add('boil');
-            boil.frame = 2;
+            boil.frame = 1;
         },
     
         update: function () {
