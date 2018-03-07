@@ -32,8 +32,9 @@ GameStates.makeGame = function( game, shared ) {
     var cricketTeamCost = 12500;
     var cricketTeamRate = 1000;
     
-    var score;
-    
+    var score = 2;
+    var scoreText;
+    var scoreTextObj;
     function quitGame() {
 
         //  Here you should destroy anything you no longer need.
@@ -57,12 +58,15 @@ GameStates.makeGame = function( game, shared ) {
             teapot = game.add.sprite(64,64,'teapot');
             teapot.animations.add('boil');
             
+            scoreText = "GBP: " + score;
+            scoreTextObj = game.add.text(game.world.centerX-300, 0, scoreText);
+            
         },
     
         update: function () {
             var deltaTime=0;
             deltaTime = game.time.elapsed/1000;
-            
+            scoreTextObj.text = "GBP: " + score;
             score+= getTotalRate() * deltaTime; 
         }
     };
