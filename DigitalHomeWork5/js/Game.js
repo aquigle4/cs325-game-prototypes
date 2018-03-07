@@ -3,7 +3,36 @@
 GameStates.makeGame = function( game, shared ) {
     // Create your own variables.
     var teapot;
-    var boil;
+    var ownedTeapots;
+    var teaPotBaseCost = 2;
+    var teaPotCost = 2;
+    var teaPotRate = 0.1;
+    
+    var telly;
+    var ownedTellies;
+    var tellyBaseCost = 50;
+    var tellyCost = 50;
+    var tellyRate = 2;
+    
+    var pub;
+    var ownedPubs;
+    var pubBaseCost = 750;
+    var pubCost = 750;
+    var pubRate = 15;
+    
+    var henge;
+    var ownedHenges;
+    var hengeBaseCost = 3000;
+    var hengeCost = 3000;
+    var hengeRate = 125;
+    
+    var cricketTeam;
+    var ownedCricketTeams;
+    var cricketTeamBaseCost = 12500;
+    var cricketTeamCost = 12500;
+    var cricketTeamRate = 1000;
+    
+    var score;
     
     function quitGame() {
 
@@ -14,17 +43,27 @@ GameStates.makeGame = function( game, shared ) {
         game.state.start('MainMenu');
 
     }
-    
+    function getTotalRate(){
+        return ((teaPotRate*ownedTeapots)+ (tellyRate*ownedTellies) + (pubRate*ownedPubs) + (hengeRate*ownedHenges) + (cricketTeamRate*ownedCricketTeams));
+        
+    }
+    function buy(ownedItems, baseCost, currentCost){
+        score -= currentCost;
+        currentCost = baseCost * Math.pow(1.15,ownedItems);
+    }
     return {
     
         create: function () {
             teapot = game.add.sprite(64,64,'teapot');
-            boil = teapot.animations.add('boil');
-            boil.frame = 1;
+            teapot.animations.add('boil');
+            
         },
     
         update: function () {
-    
+            var deltaTime=0;
+            deltaTime = game.time.elapsed/1000;
+            
+            score+= getTotalRate() * deltaTime; 
         }
     };
 };

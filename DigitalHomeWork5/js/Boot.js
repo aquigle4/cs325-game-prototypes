@@ -10,7 +10,7 @@ GameStates.makeBoot = function( game ) {
             game.input.maxPointers = 1;
     
             //  Phaser will automatically pause if the browser tab the game is in loses focus. You can disable that here:
-            game.stage.disableVisibilityChange = true;
+            game.stage.disableVisibilityChange = false;
     
             if (game.device.desktop)
             {
