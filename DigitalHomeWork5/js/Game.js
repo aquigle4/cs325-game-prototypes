@@ -59,7 +59,8 @@ GameStates.makeGame = function( game, shared ) {
             teapot.animations.add('boil');
             
             scoreText = "GBP: " + score;
-            scoreTextObj = game.add.text(game.world.centerX-300, 0, scoreText);
+            var style = { font: "65px Arial", fill: "#000044", align: "center" };
+            scoreTextObj = game.add.text(game.world.centerX-300, 0, scoreText,style);
             
         },
     
