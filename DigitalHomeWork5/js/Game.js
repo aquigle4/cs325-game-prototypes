@@ -59,12 +59,13 @@ GameStates.makeGame = function( game, shared ) {
             teapot.animations.add('boil');
             
             scoreText = "GBP: " + score;
-            var style = { font: "65px Arial", fill: "#000044", align: "center" };
+            var style = { font: "65px Arial", fill: "#ffffff", align: "center" };
             scoreTextObj = game.add.text(150, 150, scoreText,style);
             
         },
     
         update: function () {
+            console.log(score);
             var deltaTime=0;
             deltaTime = game.time.elapsed/1000;
             scoreTextObj.text = "GBP: " + score;
