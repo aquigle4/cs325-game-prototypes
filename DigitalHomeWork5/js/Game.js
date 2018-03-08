@@ -83,6 +83,13 @@ GameStates.makeGame = function( game, shared ) {
             ownedPubs++;
         }
     }
+    function buyHenge(){
+        if(score >= hengeCost){
+            score -= hengeCost;
+            hengeCost = hengeBaseCost * Math.pow(1.15,ownedHenges+1);
+            ownedHenges++;
+        }
+    }
     return {
     
         create: function () {
@@ -109,6 +116,14 @@ GameStates.makeGame = function( game, shared ) {
             pub.inputEnabled = ture;
             pub.events.onInputDown.add(buyPub);
             
+            henge = game.add.sprite (300,394,'henge');
+            henge.scale.x = 4;
+            henge.scale.y = 4;
+            henge.inputEnabled = ture;
+            henge.events.onInputDown.add(buyHenge);
+            
+            
+            
             scoreText = "GBP: " + score;
             var style = { font: "30px Arial", fill: "#ffffff", align: "center" ,stroke : '#000000'};
             style.strokeThickness = 4
@@ -129,7 +144,8 @@ GameStates.makeGame = function( game, shared ) {
             scoreTextObj.text = "GBP: " + Number.parseFloat(score).toFixed(2);
             teaPotText.text = "Teapot cost: " + Number.parseFloat(teaPotCost).toFixed(2) + " Teapots Owned: " + ownedTeapots + " Rate: 0.2/s";
             tellyText.text = "Telly Cost: "+ Number.parseFloat(tellyCost).toFixed(2) + " Tellies Owned: " + ownedTellies + " Rate: 2/s";
-            pubText.text = "Pubs Owned: " + ownedPubs + " Rate: 15/s";
+            pubText.text = "Pub Cost: "+ Number.parseFloat(pubCost).toFixed(2) + " Pubs Owned: " + ownedPubs + " Rate: 15/s";
+            hengeText.text = "Henge Cost: " + Number.parseFloat(hengeCost).toFixed(2) + " Henges Owned: " + ownedHenges + " Rate: 125/s";
             
             
         }

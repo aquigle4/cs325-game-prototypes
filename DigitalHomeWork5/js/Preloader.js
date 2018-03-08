@@ -30,6 +30,7 @@ GameStates.makePreloader = function( game ) {
             game.load.spritesheet('teapot', "assets/TeaPot.png",32,32);
             game.load.spritesheet('telly', "assets/Telly.png",32,32);
             game.load.image('pub','assets/pub.png');
+            game.load.image('henge','assets/henge.png');
             game.load.image( 'logo', 'assets/phaser.png' );
         },
     
