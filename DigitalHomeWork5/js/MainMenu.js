@@ -8,7 +8,7 @@ GameStates.makeMainMenu = function( game, shared ) {
     function startGame(pointer) {
 
         //	Ok, the Play Button has been clicked or touched, so let's stop the music (otherwise it'll carry on playing)
-        music.stop();
+        
 
         //	And start the actual game
         game.state.start('Game');
@@ -28,7 +28,7 @@ GameStates.makeMainMenu = function( game, shared ) {
     
             game.add.sprite(0, 0, 'titlePage');
     
-            playButton = game.add.button( 303, 400, 'playButton', startGame, null, 'over', 'out', 'down');
+            playButton = game.add.button( 545, 320, 'playButton', startGame, null, 'over', 'out', 'down');
     
         },
     
