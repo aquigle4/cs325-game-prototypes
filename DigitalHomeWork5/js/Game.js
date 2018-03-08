@@ -113,13 +113,13 @@ GameStates.makeGame = function( game, shared ) {
             pub = game.add.sprite (300,266,'pub');
             pub.scale.x = 4;
             pub.scale.y = 4;
-            pub.inputEnabled = ture;
+            pub.inputEnabled = true;
             pub.events.onInputDown.add(buyPub);
             
             henge = game.add.sprite (300,394,'henge');
             henge.scale.x = 4;
             henge.scale.y = 4;
-            henge.inputEnabled = ture;
+            henge.inputEnabled = true;
             henge.events.onInputDown.add(buyHenge);
             
             
