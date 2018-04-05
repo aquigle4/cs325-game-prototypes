@@ -9,6 +9,7 @@ GameStates.makeGame = function( game, shared ) {
     var jumpButton;
     var stickButton;
     var walls = [];
+    var wallSprites = [];
     var lines = [];
     
     var lineCurrentlyOn;
@@ -130,6 +131,13 @@ GameStates.makeGame = function( game, shared ) {
         walls.push(new Phaser.Line(x,y,x,y+height));
         walls.push(new Phaser.Line(x,y+height,x+width,y+height));
         walls.push(new Phaser.Line(x+width,y,x+width,y+height));
+        
+        var wall = game.add.tileSprite(x,y,width,height,'brick');
+        game.physics.enable(wall,Phaser.Physics.ARCADE);
+        wall.body.immovable = true;
+        wall.body.moves = false;
+        game.physics.arcade.collide(player.body,wall.body);
+        wallSprites.push(wall);
     }
     return {
     
@@ -142,7 +150,7 @@ GameStates.makeGame = function( game, shared ) {
             player.anchor.x = 0.5;
             player.anchor.y = 0.5;
             
-            game.physics.enable(player,Phaser.Physics.ARCADE);
+            game.physics.enable(player);
             player.body.gravity.y = 350;
             player.body.collideWorldBounds = true;
             //game.camera.follow(character); 
@@ -151,11 +159,13 @@ GameStates.makeGame = function( game, shared ) {
             cursors.left = game.input.keyboard.addKey(Phaser.Keyboard.A);
             cursors.right = game.input.keyboard.addKey(Phaser.Keyboard.D);
             cursors.up = game.input.keyboard.addKey(Phaser.Keyboard.W);
+            cursors.down = game.input.keyboard.addKey(Phaser.Keyboard.S);
             jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             stickButton = game.input.keyboard.addKey(Phaser.Keyboard.E);
             
             drawWall(500,500,50,50);
             drawWall(100,100,150,50);
+            drawWall(700,700,50,50);
             
         },
     
@@ -185,8 +195,8 @@ GameStates.makeGame = function( game, shared ) {
                     player.body.gravity.y = 350;
                 }
                 //So long as you are no further than the start or end of the line
-                var movementLine;
-                    if(cursors.left.isDown){
+               
+               if(cursors.left.isDown){
                         if(lineCurrentlyOnRight){
                             game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),-150,player.body.velocity);
                         }else{
@@ -199,7 +209,21 @@ GameStates.makeGame = function( game, shared ) {
                         }else{
                              game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),-150,player.body.velocity);
                         }
-                    }                
+                    }
+                    if(cursors.down.isDown){
+                        if(!lineCurrentlyOnUp){
+                            game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),-150,player.body.velocity);
+                        }else{
+                             game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),150,player.body.velocity);
+                        }
+                    } 
+                    if(cursors.up.isDown){
+                        if(lineCurrentlyOnUp){
+                            game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),-150,player.body.velocity);
+                        }else{
+                             game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),150,player.body.velocity);
+                        }
+                    } 
                 
             }
             if(!isCurrentlyOnALine){
@@ -233,7 +257,10 @@ GameStates.makeGame = function( game, shared ) {
             if((game.input.activePointer.isUp)){
              clicked = false;   
             }
-
+            
+            for(var i =0; i <wallSprites.length; i++){
+                game.physics.arcade.collide(player,wallSprites[i]);
+            }
             },
         render: function(){
             lines.forEach(function(line){
