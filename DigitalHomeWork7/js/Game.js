@@ -10,6 +10,7 @@ GameStates.makeGame = function( game, shared ) {
     var stickButton;
     var walls = [];
     var lines = [];
+    var wallSprites = [];
     
     var lineCurrentlyOn;
     var isCurrentlyOnALine = false;
@@ -157,11 +158,21 @@ GameStates.makeGame = function( game, shared ) {
         }
     }
     }
-    function drawWall(x,y, width, height){
+    function drawWall(x,y, width, height, fillingKey){
         walls.push(new Phaser.Line(x,y,width+x,y));
         walls.push(new Phaser.Line(x,y,x,y+height));
         walls.push(new Phaser.Line(x,y+height,x+width,y+height));
         walls.push(new Phaser.Line(x+width,y,x+width,y+height));
+        if(fillingKey != null){
+            var wall = game.add.tileSprite(startX,startY,width,height,'brick');
+            game.physics.enable(wall);
+            //Lock The new wall from moving
+            wall.body.immovable = true;
+            wall.body.moves = false;
+            game.physics.arcade.collide(player.body,wall.body);
+            //Add the wall to the array of walls
+            wallSprites.push(wall);
+        }
     }
     return {
     
@@ -186,10 +197,10 @@ GameStates.makeGame = function( game, shared ) {
             jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             stickButton = game.input.keyboard.addKey(Phaser.Keyboard.E);
             
-            drawWall(500,500,50,50);
-            drawWall(100,100,150,50);
+            drawWall(500,500,50,50,'brick');
+            drawWall(100,100,150,50,'brick');
             
-            drawWall(1,1,1023, 767);
+            drawWall(1,1,1022, 766,null);
             
         },
     
@@ -271,7 +282,9 @@ GameStates.makeGame = function( game, shared ) {
             if((game.input.activePointer.isUp)){
              clicked = false;   
             }
-
+            for(var i =0; i <wallSprites.length; i++){
+                game.physics.arcade.collide(player,wallSprites[i]);
+            }
             },
         render: function(){
             lines.forEach(function(line){
