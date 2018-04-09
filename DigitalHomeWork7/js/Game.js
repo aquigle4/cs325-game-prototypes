@@ -179,7 +179,7 @@ GameStates.makeGame = function( game, shared ) {
             
             drawWall(500,500,50,50);
             drawWall(100,100,150,50);
-            drawWall(0,0,1024, 768);
+            drawWall(1,1,1023, 767);
             
         },
     
