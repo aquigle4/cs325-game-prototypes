@@ -103,7 +103,7 @@ GameStates.makeGame = function( game, shared ) {
         //RayBurst
         //Find The closest line intersection to any of those lines
         for(var i = 0; i <= 360; i +=2){
-            var rayBustRay = new Phaser.Line(game.input.x, game.input.y,(game.input.x + 2000*Math.cos(i)),(game.input.y + 2000*Math.sin(i)));
+            var rayBustRay = new Phaser.Line(game.input.worldX, game.input.worldY,(game.input.worldX + 200*Math.cos(i)),(game.input.worldY + 2000*Math.sin(i)));
             //Nested loops yay
             lines.forEach(function(line){
                 //If the ray burst line intersects with a webline in the array lines[]
@@ -115,9 +115,8 @@ GameStates.makeGame = function( game, shared ) {
                 //Get the distance of intersection, if that distance is less than the shortest intersection ray
                 //It becomes the new intersection ray
                 if(intersectionPoint!= null){
-                    var intersectedLine = (new Phaser.Line(game.input.x,game.input.y,intersectionPoint.x,intersectionPoint.y));
+                    var intersectedLine = (new Phaser.Line(game.input.worldX,game.input.worldY,intersectionPoint.x,intersectionPoint.y));
                     if(intersectedLine.length< shortestIntersectionRayDistance){
-                        ;
                         shortestLineThatsIntersected = line;
                         shortestIntersectionRayDistance = intersectedLine.length;
                         shortestIntersectionRay = intersectedLine;
