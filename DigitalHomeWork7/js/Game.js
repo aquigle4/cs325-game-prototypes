@@ -79,7 +79,9 @@ GameStates.makeGame = function( game, shared ) {
             
             });
         totalLineLength+= smallestIntersectionDistance;
-        var backwardLine = smallestIntersectionLine
+        var backwardLine = smallestIntersectionLine;
+        console.log("forward"+ forwardLine.end);
+        console.log("Back: " + backwardLine.end);
         var combinedLine = new Phaser.Line(backwardLine.end.x,backwardLine.end.y,forwardLine.end.x,forwardLine.end.y); 
         lines.push(combinedLine);
     }
