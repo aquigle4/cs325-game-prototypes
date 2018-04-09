@@ -65,7 +65,7 @@ GameStates.makeGame = function( game, shared ) {
         flippedLineAngle = (flippedLineAngle+180) % 360;
         flippedLineAngle = flippedLineAngle * (Math.PI/180);
         console.log(lineToPointer.angle);
-        confirm.log(flippedLineAngle);
+        console.log(flippedLineAngle);
         lineExtrapolated = new Phaser.Line(player.x,player.y,(player.x + -2000 * Math.cos(flippedLineAngle),(player.y + -2000*Math.sin(flippedLineAngle))));
         smallestIntersectionDistance = 100000;
         smallestIntersectionLine = 0;
