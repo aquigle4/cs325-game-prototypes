@@ -61,7 +61,7 @@ GameStates.makeGame = function( game, shared ) {
         totalLineLength+= smallestIntersectionLine.length;
         let forwardLine = smallestIntersectionLine;  
         //Away from the the player
-        lineExtrapolated = new Phaser.Line(player.x,player.y,(player.x + 2000 * Math.cos(lineToPointer.angle+ Math.PI),2000*Math.sin(lineToPointer.angle)));
+        lineExtrapolated = new Phaser.Line(player.x,player.y,(player.x + 2000 * Math.sin(lineToPointer.angle+ Math.PI),2000*Math.cos(lineToPointer.angle)));
         smallestIntersectionDistance = 100000;
         smallestIntersectionLine = 0;
         walls.forEach(function(wall){
@@ -79,12 +79,13 @@ GameStates.makeGame = function( game, shared ) {
             
             });
         totalLineLength+= smallestIntersectionLine.length;
+        console.log(smallestIntersectionLine.length);
         let backwardLine = smallestIntersectionLine;
         console.log("forward"+ forwardLine.end);
         console.log("Back: " + backwardLine.end);
         lines.push(forwardLine);
         lines.push(backwardLine);
-        console.log(totalLineLength);
+        
         //var combinedLine = new Phaser.Line(backwardLine.end.x,backwardLine.end.y,forwardLine.end.x,forwardLine.end.y); 
         //lines.push(combinedLine);
     }
