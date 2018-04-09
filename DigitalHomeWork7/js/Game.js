@@ -24,6 +24,9 @@ GameStates.makeGame = function( game, shared ) {
     var shortestLineThatsIntersected;
     var foundIntersection = false;
     
+    var webCooldownMax = 120;
+    var webCooldownCurrent = 0;
+    
     var maxPlayerLineStickRange = 50;
     function quitGame() {
 
@@ -84,11 +87,9 @@ GameStates.makeGame = function( game, shared ) {
         let backwardLine = smallestIntersectionLine;
         console.log("forward"+ forwardLine.end);
         console.log("Back: " + backwardLine.end);
-        lines.push(forwardLine);
-        lines.push(backwardLine);
-        
-        //var combinedLine = new Phaser.Line(backwardLine.end.x,backwardLine.end.y,forwardLine.end.x,forwardLine.end.y); 
-        //lines.push(combinedLine);
+        var combinedLine = new Phaser.Line(backwardLine.end.x,backwardLine.end.y,forwardLine.end.x,forwardLine.end.y); 
+        lines.push(combinedLine);
+        webCooldownCurrent = 0;
     }
     
     function jumpToLine(){
@@ -192,9 +193,9 @@ GameStates.makeGame = function( game, shared ) {
         },
     
         update: function () {
-            //On Floor movement stuff
-            //console.log(isCurrentlyOnALine);
-            //console.log(player.body.gravity.y);
+            if(webCooldownCurrent < webCooldownMax){
+                webCooldownCurrent++;
+            }
             player.body.velocity.x = 0;
             
             if(isCurrentlyOnALine){
@@ -259,8 +260,12 @@ GameStates.makeGame = function( game, shared ) {
             }
             if ((game.input.activePointer.isDown) && (!clicked))
             {
-                drawLineFromPlayer();
-                clicked = true;
+                if(webCooldownCurrent >= webCooldownMax){
+                    drawLineFromPlayer();
+                    clicked = true;
+                }else{
+                    console.log("Web stil on cd");
+                }
             }
             if((game.input.activePointer.isUp)){
              clicked = false;   
