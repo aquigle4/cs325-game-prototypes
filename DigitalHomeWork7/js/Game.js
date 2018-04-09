@@ -61,7 +61,12 @@ GameStates.makeGame = function( game, shared ) {
         totalLineLength+= smallestIntersectionLine.length;
         let forwardLine = smallestIntersectionLine;  
         //Away from the the player
-        lineExtrapolated = new Phaser.Line(player.x,player.y,(player.x + -2000 * Math.cos(lineToPointer.angle),(player.y + -2000*Math.sin(lineToPointer.angle))));
+        let flippedLineAngle = lineToPointer.angle * (180/Math.PI);
+        flippedLineAngle = (flippedLineAngle+180) % 360;
+        flippedLineAngle = flippedLineAngle * (Math.PI/180);
+        console.log(lineToPointer.angle);
+        confirm.log(flippedLineAngle);
+        lineExtrapolated = new Phaser.Line(player.x,player.y,(player.x + -2000 * Math.cos(flippedLineAngle),(player.y + -2000*Math.sin(flippedLineAngle))));
         smallestIntersectionDistance = 100000;
         smallestIntersectionLine = 0;
         walls.forEach(function(wall){
