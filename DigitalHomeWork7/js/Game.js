@@ -60,7 +60,7 @@ GameStates.makeGame = function( game, shared ) {
         totalLineLength+= smallestIntersectionDistance;
         lines.push(smallestIntersectionLine); 
         //Away from the the player
-        lineExtrapolated = new Phaser.Line(player.x,player.y,(player.x + 2000 * Math.cos(lineToPointer.angle+ Math.PI),2000*Math.sin(lineToPointer.angle+ math.PI)));
+        lineExtrapolated = new Phaser.Line(player.x,player.y,(player.x + 2000 * Math.cos(lineToPointer.angle+ Math.PI),2000*Math.sin(lineToPointer.angle+ Math.PI)));
         smallestIntersectionDistance = 100000;
         smallestIntersectionLine = 0;
         walls.forEach(function(wall){
