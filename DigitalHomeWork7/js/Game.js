@@ -164,7 +164,7 @@ GameStates.makeGame = function( game, shared ) {
         walls.push(new Phaser.Line(x,y+height,x+width,y+height));
         walls.push(new Phaser.Line(x+width,y,x+width,y+height));
         if(fillingKey != null){
-            var wall = game.add.tileSprite(startX,startY,width,height,'brick');
+            var wall = game.add.tileSprite(startX,startY,width,height,fillingKey);
             game.physics.enable(wall);
             //Lock The new wall from moving
             wall.body.immovable = true;
