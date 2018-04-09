@@ -199,9 +199,9 @@ GameStates.makeGame = function( game, shared ) {
             
             drawWall(500,500,50,50,'brick');
             drawWall(100,100,150,50,'brick');
-            
+            game.world.setBounds(0,0,1500,3000);
             drawWall(1,1,1022, 766,null);
-            
+            game.camera.follow(player);
         },
     
         update: function () {
