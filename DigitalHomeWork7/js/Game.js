@@ -61,7 +61,7 @@ GameStates.makeGame = function( game, shared ) {
         totalLineLength+= smallestIntersectionLine.length;
         let forwardLine = smallestIntersectionLine;  
         //Away from the the player
-        lineExtrapolated = new Phaser.Line(player.x,player.y,(player.x + -2000 * Math.cos(lineToPointer.angle),(player.y + -2000*Math.sin(lineToPointer.angle)));
+        lineExtrapolated = new Phaser.Line(player.x,player.y,(player.x + -2000 * Math.cos(lineToPointer.angle),(player.y + -2000*Math.sin(lineToPointer.angle))));
         smallestIntersectionDistance = 100000;
         smallestIntersectionLine = 0;
         walls.forEach(function(wall){
