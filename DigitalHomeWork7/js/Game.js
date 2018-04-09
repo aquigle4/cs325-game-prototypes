@@ -188,7 +188,8 @@ GameStates.makeGame = function( game, shared ) {
             
             drawWall(500,500,50,50);
             drawWall(100,100,150,50);
-            drawWall(1,1,1023, 767);
+            game.world.setBounds(0,0,2000,4000);
+            drawWall(1,1,1998, 3998);
             
         },
     
