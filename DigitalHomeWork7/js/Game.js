@@ -42,7 +42,7 @@ GameStates.makeGame = function( game, shared ) {
     
     function drawLineFromPlayer(){
         //Draw a line to the pointer to get the angle
-        let lineToPointer = new Phaser.Line(player.x,player.y,game.input.x,game.input.y);
+        let lineToPointer = new Phaser.Line(player.x,player.y,game.input.worldX,game.input.worldY);
         let lineExtrapolated = new Phaser.Line(player.x, player.y,(player.x + 2000*Math.cos(lineToPointer.angle)),(player.y + 2000*Math.sin(lineToPointer.angle)) );
         var smallestIntersectionDistance = 100000;
         var smallestIntersectionLine;
