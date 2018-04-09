@@ -81,6 +81,7 @@ GameStates.makeGame = function( game, shared ) {
         totalLineLength+= smallestIntersectionDistance;
         var backwardLine = smallestIntersectionLine
         var combinedLine = Phaser.Line(backwardLine.end.x,backwardLine.end.y,forwardLine.end.x,forwardLine.end.y); 
+        lines.push(combinedLine);
     }
     
     function jumpToLine(){
