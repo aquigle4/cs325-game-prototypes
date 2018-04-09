@@ -64,6 +64,7 @@ GameStates.makeGame = function( game, shared ) {
         let flippedLineAngle = lineToPointer.angle * (180/Math.PI);
         flippedLineAngle = (flippedLineAngle+180) % 360;
         flippedLineAngle = flippedLineAngle * (Math.PI/180);
+        flippedLineAngle++;
         console.log(lineToPointer.angle);
         console.log(flippedLineAngle);
         lineExtrapolated = new Phaser.Line(player.x,player.y,(player.x + -2000 * Math.cos(flippedLineAngle),(player.y + -2000*Math.sin(flippedLineAngle))));
