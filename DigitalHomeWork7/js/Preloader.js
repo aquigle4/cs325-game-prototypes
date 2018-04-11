@@ -31,6 +31,8 @@ GameStates.makePreloader = function( game ) {
             //Library bg from: https://www.vladstudio.com/wallpaper/?library
             game.load.image('bg','assets/bg.jpg');
             game.load.image('brick','assets/brick.png');
+            game.load.image("chain",'assets/chain.png');
+            game.load.image("bookshelf",'assets/bookshelf.png');
             game.load.image('whiteBox','assets/whiteBox.png');
         },
     

@@ -179,8 +179,8 @@ GameStates.makeGame = function( game, shared ) {
     
             game.physics.startSystem(Phaser.Physics.ARCADE);
             game.add.sprite(0,0,'bg');
-            
-            player = game.add.sprite(1,700, 'whiteBox');
+            game.world.setBounds(0,0,1500,2225);
+            player = game.add.sprite(1400,2000, 'whiteBox');
             player.anchor.x = 0.5;
             player.anchor.y = 0.5;
             
@@ -195,10 +195,11 @@ GameStates.makeGame = function( game, shared ) {
             cursors.up = game.input.keyboard.addKey(Phaser.Keyboard.W);
             jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             stickButton = game.input.keyboard.addKey(Phaser.Keyboard.E);
-            
+            //Platforms
             drawWall(500,500,50,50,'brick');
             drawWall(100,100,150,50,'brick');
-            game.world.setBounds(0,0,1500,3000);
+            drawWall(1000)
+            
             drawWall(1,1,1497, 2997,null);
             game.camera.follow(player);
         },
