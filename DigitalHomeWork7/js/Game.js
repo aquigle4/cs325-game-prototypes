@@ -198,6 +198,7 @@ GameStates.makeGame = function( game, shared ) {
             //Platforms
             drawWall(500,500,50,50,'brick');
             drawWall(100,100,150,50,'brick');
+            drawWall(1100,600,100,1000,'brick');
             drawWall(1000)
             
             drawWall(1,1,1298, 1998,null);
