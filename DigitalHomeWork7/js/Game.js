@@ -180,7 +180,7 @@ GameStates.makeGame = function( game, shared ) {
             game.physics.startSystem(Phaser.Physics.ARCADE);
             game.add.sprite(0,0,'bg');
             game.world.setBounds(0,0,1300,1800);
-            player = game.add.sprite(1200,1700, 'whiteBox');
+            player = game.add.sprite(1000,1700, 'whiteBox');
             player.anchor.x = 0.5;
             player.anchor.y = 0.5;
             
@@ -198,7 +198,8 @@ GameStates.makeGame = function( game, shared ) {
             //Platforms
             drawWall(500,500,50,50,'brick');
             drawWall(100,100,150,50,'brick');
-            drawWall(1100,600,100,1000,'brick');
+            drawWall(1100,600,50,1000,'brick');
+            drawWall(1100,1700,500,100,'brick');
             drawWall(1000)
             
             drawWall(1,1,1298, 1998,null);
