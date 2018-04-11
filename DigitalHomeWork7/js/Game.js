@@ -200,7 +200,7 @@ GameStates.makeGame = function( game, shared ) {
             drawWall(100,100,150,50,'brick');
             drawWall(1100,600,50,1000,'brick');
             drawWall(1100,1600,500,75,'brick');
-            drawWall(1000)
+            drawWall(200,600,50,2000,'brick');
             
             drawWall(1,1,1298, 1998,null);
             game.camera.follow(player);
