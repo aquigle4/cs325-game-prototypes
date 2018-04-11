@@ -180,6 +180,7 @@ GameStates.makeGame = function( game, shared ) {
             game.physics.startSystem(Phaser.Physics.ARCADE);
             game.add.sprite(0,0,'bg');
             game.world.setBounds(0,0,1300,1800);
+            player = game.add.sprite(1200,1700, 'whiteBox');
             player.anchor.x = 0.5;
             player.anchor.y = 0.5;
             
