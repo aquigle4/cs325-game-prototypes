@@ -12,6 +12,10 @@ GameStates.makeGame = function( game, shared ) {
     var lines = [];
     var wallSprites = [];
     
+    var style = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle" };
+    var sectionTexts = [];
+    var sectionHitboxes = [];
+    
     var isColliding;
     var jumpCoolDownMax = 90;
     var jumpCoolDownCurrent = 90;
@@ -30,9 +34,14 @@ GameStates.makeGame = function( game, shared ) {
     var foundIntersection = false;
     
     var webCooldownMax = 120;
-    var webCooldownCurrent = 0;
+    var webCooldownCurrent = 120;
     
     var maxPlayerLineStickRange = 50;
+    //0=100, 1 =200, etc
+    var currentSectionGoal = 0;
+    var time = 0;
+    var currentlyHeldBookSection = 0;
+    
     function quitGame() {
 
         //  Here you should destroy anything you no longer need.
@@ -178,6 +187,19 @@ GameStates.makeGame = function( game, shared ) {
             wallSprites.push(wall);
         }
     }
+    function drawFilledBookShelf(x,y,acessSide = 'right'){
+        drawWall(x,y,64,98,'bookshelfFull');
+        sectionTexts.push(game.add.text(x,y-40,(sectionTexts.length+1)*100,style));
+        if(acessSide == 'right'){
+            var newHitbox = game.add.sprite(x+66,y+34,'whiteBox');    
+        }else{
+            var newHitbox = game.add.sprite(x-66,y+34,'whiteBox');
+        }
+        newHitbox.alpha = 0.2;
+        newHitbox.scale.setTo(2,2);
+        game.physics.enable(newHitbox);
+        sectionHitboxes.push(newHitbox);
+    }
     return {
     
         create: function () {
@@ -201,16 +223,28 @@ GameStates.makeGame = function( game, shared ) {
             jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             stickButton = game.input.keyboard.addKey(Phaser.Keyboard.E);
             //Platforms
-            drawWall(500,500,50,50,'brick');
-            drawWall(100,100,150,50,'brick');
             drawWall(1100,600,50,1000,'brick');
             drawWall(1100,1600,500,75,'brick');
             drawWall(200,600,50,2000,'brick');
             drawWall(950,1300,150,20,'brick');
             drawWall(200,1775,5000,25,'brick');
+            drawWall(0,550,250,50,'brick');
+            drawWall(1100,550,800,50,'brick');
+            drawWall(725,0,50,250,'brick');
+            drawWall(600,1400,50,375, 'brick');
             
             drawWall(1036,1320,64,196,'bookshelfEmpty');
-            drawWall(1036,1204,64,98,'bookshelfFull');
+            drawWall(536,1488,64,96*3,'bookshelfEmpty');
+            
+            drawFilledBookShelf(1036,1204,'left');
+    
+            drawFilledBookShelf(250,1676);
+            
+            drawFilledBookShelf(250,600);
+            
+            drawFilledBookShelf(0,300);
+            drawWall(0,392,64,96,'bookshelfEmpty');
+            drawFilledBookShelf(1236,449,'left');
             
             drawWall(1,1,1298, 1998,null);
             game.camera.follow(player);
@@ -237,13 +271,7 @@ GameStates.makeGame = function( game, shared ) {
                          player.body.gravity.y = 350;
                     }
                 }
-                if (jumpButton.isDown)
-                {
-                    isCurrentlyOnALine = false;
-                    
-                    player.body.gravity.y = 350;
-                    player.body.velocity.y = -250;
-                }
+
                 //So long as you are no further than the start or end of the line
   
                 if(cursors.left.isDown){
@@ -259,7 +287,14 @@ GameStates.makeGame = function( game, shared ) {
                     }else{
                          game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),-150,player.body.velocity);
                     }
-                 }                
+                 }
+                if (jumpButton.isDown)
+                {
+                    isCurrentlyOnALine = false;
+                    
+                    player.body.gravity.y = 350;
+                    player.body.velocity.y = -250;
+                }
                 
             }
             if(!isCurrentlyOnALine){
@@ -311,7 +346,7 @@ GameStates.makeGame = function( game, shared ) {
             walls.forEach(function(line){
                 game.debug.geom(line);
             });
-            game.debug.text(totalLineLength,25,25);
+            game.debug.text(Math.round( totalLineLength),25,25);
 
         }
         };
