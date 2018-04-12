@@ -8,6 +8,7 @@ GameStates.makeGame = function( game, shared ) {
     var cursors;
     var jumpButton;
     var stickButton;
+    var interactButton;
     var walls = [];
     var lines = [];
     var wallSprites = [];
@@ -40,7 +41,18 @@ GameStates.makeGame = function( game, shared ) {
     //0=100, 1 =200, etc
     var currentSectionGoal = 0;
     var time = 0;
-    var currentlyHeldBookSection = 0;
+    var score = 0;
+    var currentlyHeldBookSection = -1;
+    var turnInHitbox;
+    
+    function checkOverlap(spriteA, spriteB) {
+
+    var boundsA = spriteA.getBounds();
+    var boundsB = spriteB.getBounds();
+
+    return Phaser.Rectangle.intersects(boundsA, boundsB);
+
+    }
     
     function quitGame() {
 
@@ -195,11 +207,12 @@ GameStates.makeGame = function( game, shared ) {
         }else{
             var newHitbox = game.add.sprite(x-66,y+34,'whiteBox');
         }
+        newHitbox.sectionNumber = sectionHitboxes.length;
         newHitbox.alpha = 0.2;
         newHitbox.scale.setTo(2,2);
-        game.physics.enable(newHitbox);
         sectionHitboxes.push(newHitbox);
     }
+    
     return {
     
         create: function () {
@@ -222,6 +235,7 @@ GameStates.makeGame = function( game, shared ) {
             cursors.up = game.input.keyboard.addKey(Phaser.Keyboard.W);
             jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             stickButton = game.input.keyboard.addKey(Phaser.Keyboard.E);
+            interactButton = game.input.keyboard.addKey(Phaser.Keyboard.R);
             //Platforms
             drawWall(1100,600,50,1000,'brick');
             drawWall(1100,1600,500,75,'brick');
@@ -242,10 +256,16 @@ GameStates.makeGame = function( game, shared ) {
             
             drawFilledBookShelf(250,600);
             
-            drawFilledBookShelf(0,300);
-            drawWall(0,392,64,96,'bookshelfEmpty');
+            drawFilledBookShelf(0,350);
+            drawWall(0,442,64,96,'bookshelfEmpty');
             drawFilledBookShelf(1236,449,'left');
             
+            turnInHitbox = game.add.sprite(1000,1710,'whiteBox');
+            turnInHitbox.alpha = 0.1;
+            turnInHitbox.tint = 0x00ff00
+            turnInHitbox.scale.setTo(2,2);
+            
+            currentSectionGoal = Math.floor(Math.random() * sectionHitboxes.length);
             drawWall(1,1,1298, 1998,null);
             game.camera.follow(player);
         },
@@ -256,7 +276,22 @@ GameStates.makeGame = function( game, shared ) {
                 webCooldownCurrent++;
             }
             player.body.velocity.x = 0;
-            
+            for(var i = 0; i < sectionHitboxes.length ;i++){
+                if(checkOverlap(sectionHitboxes[i],player)){
+                    if(interactButton.isDown){
+                        currentlyHeldBookSection = sectionHitboxes[i].sectionNumber;
+                    }
+                }
+            }
+            if(checkOverlap(player,turnInHitbox)){
+                if(interactButton.isDown){
+                    if(currentlyHeldBookSection == currentSectionGoal){
+                        currentlyHeldBookSection = -1;
+                        score++;
+                        currentSectionGoal = Math.floor(Math.random() * sectionHitboxes.length);
+                    }
+                }
+            }
             if(isCurrentlyOnALine){
                 player.body.velocity.y = 0
                 
@@ -347,7 +382,9 @@ GameStates.makeGame = function( game, shared ) {
                 game.debug.geom(line);
             });
             game.debug.text(Math.round( totalLineLength),25,25);
-
+            game.debug.text("Section of book Currently Requested: "+ ((currentSectionGoal+1) * 100),25,50);
+            game.debug.text("Section of book Currently held: " + (currentlyHeldBookSection+1) * 100,25,75);
+            game.debug.text("Score: "+ score,25,100);
         }
         };
 };
