@@ -12,6 +12,10 @@ GameStates.makeGame = function( game, shared ) {
     var lines = [];
     var wallSprites = [];
     
+    var isColliding;
+    var jumpCoolDownMax = 90;
+    var jumpCoolDownCurrent = 90;
+    
     var lineCurrentlyOn;
     var isCurrentlyOnALine = false;
     var lineCurrentlyOnRight = true;
@@ -157,13 +161,14 @@ GameStates.makeGame = function( game, shared ) {
         }
     }
     }
+    var wall;
     function drawWall(x,y, width, height, fillingKey){
         walls.push(new Phaser.Line(x,y,width+x,y));
         walls.push(new Phaser.Line(x,y,x,y+height));
         walls.push(new Phaser.Line(x,y+height,x+width,y+height));
         walls.push(new Phaser.Line(x+width,y,x+width,y+height));
         if(fillingKey != null){
-            var wall = game.add.tileSprite(x,y,width,height,fillingKey);
+            wall = game.add.tileSprite(x,y,width,height,fillingKey);
             game.physics.enable(wall);
             //Lock The new wall from moving
             wall.body.immovable = true;
@@ -178,7 +183,7 @@ GameStates.makeGame = function( game, shared ) {
         create: function () {
     
             game.physics.startSystem(Phaser.Physics.ARCADE);
-            game.add.sprite(0,0,'bg');
+            //game.add.sprite(0,0,'bg');
             game.world.setBounds(0,0,1300,1800);
             player = game.add.sprite(1000,1700, 'whiteBox');
             player.anchor.x = 0.5;
@@ -202,12 +207,17 @@ GameStates.makeGame = function( game, shared ) {
             drawWall(1100,1600,500,75,'brick');
             drawWall(200,600,50,2000,'brick');
             drawWall(950,1300,150,20,'brick');
+            drawWall(200,1775,5000,25,'brick');
+            
+            drawWall(1036,1320,64,196,'bookshelfEmpty');
+            drawWall(1036,1204,64,98,'bookshelfFull');
             
             drawWall(1,1,1298, 1998,null);
             game.camera.follow(player);
         },
     
         update: function () {
+            isColliding  = game.physics.arcade.collide(player,wallSprites);
             if(webCooldownCurrent < webCooldownMax){
                 webCooldownCurrent++;
             }
@@ -230,64 +240,69 @@ GameStates.makeGame = function( game, shared ) {
                 if (jumpButton.isDown)
                 {
                     isCurrentlyOnALine = false;
+                    
                     player.body.gravity.y = 350;
+                    player.body.velocity.y = -250;
                 }
                 //So long as you are no further than the start or end of the line
-                var movementLine;
-                    if(cursors.left.isDown){
-                        if(lineCurrentlyOnRight){
-                            game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),-150,player.body.velocity);
-                        }else{
-                             game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),150,player.body.velocity);
-                        }
+  
+                if(cursors.left.isDown){
+                    if(lineCurrentlyOnRight){
+                        game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),-150,player.body.velocity);
+                    }else{
+                         game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),150,player.body.velocity);
                     }
-                    if(cursors.right.isDown){
-                        if(lineCurrentlyOnRight){
-                            game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),150,player.body.velocity);
-                        }else{
-                             game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),-150,player.body.velocity);
-                        }
-                    }                
+                }
+                if(cursors.right.isDown){
+                    if(lineCurrentlyOnRight){
+                        game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),150,player.body.velocity);
+                    }else{
+                         game.physics.arcade.velocityFromAngle(((lineCurrentlyOn.angle)*180/Math.PI),-150,player.body.velocity);
+                    }
+                 }                
                 
             }
             if(!isCurrentlyOnALine){
-            //not on a line movement
-            if (cursors.left.isDown)
-            {
-                player.body.velocity.x = -150;
+                //not on a line movement
+                    if (cursors.left.isDown)
+                    {
+                        player.body.velocity.x = -150;
 
 
-            }
-            else if (cursors.right.isDown)
-            {
-                player.body.velocity.x = 150;
+                    }
+                    else if (cursors.right.isDown)
+                    {
+                        player.body.velocity.x = 150;
+                    }
+
+                    if(jumpCoolDownCurrent < jumpCoolDownMax){
+                        jumpCoolDownCurrent++;
+                    }
+                    if(stickButton.isDown && !isCurrentlyOnALine ){
+                        jumpToLine();
+                    }
+                    if (jumpButton.isDown && isColliding )
+                    {
+                        if(jumpCoolDownCurrent >= jumpCoolDownMax){
+                            player.body.velocity.y = -250;
+                            jumpCoolDownCurrent = 0;
+                        }
+                    }
 
 
-            }
-            if(stickButton.isDown && !isCurrentlyOnALine ){
-                jumpToLine();
-            }
-            if (jumpButton.isDown && player.body.onFloor() )
-            {
-                player.body.velocity.y = -250;
-
-            }
-            }
-            if ((game.input.activePointer.isDown) && (!clicked))
-            {
-                if(webCooldownCurrent >= webCooldownMax){
-                    drawLineFromPlayer();
-                    clicked = true;
-                }else{
-                    console.log("Web stil on cd");
+                    if ((game.input.activePointer.isDown) && (!clicked))
+                    {
+                        if(webCooldownCurrent >= webCooldownMax){
+                            drawLineFromPlayer();
+                            clicked = true;
+                        }else{
+                            console.log("Web stil on cd");
+                        }
+                    }
+                    if((game.input.activePointer.isUp)){
+                     clicked = false;   
+                    }
                 }
-            }
-            if((game.input.activePointer.isUp)){
-             clicked = false;   
-            }
-            for(var i =0; i <wallSprites.length; i++){
-                game.physics.arcade.collide(player,wallSprites[i]);
-            }
             },
         render: function(){
             lines.forEach(function(line){
@@ -297,6 +312,7 @@ GameStates.makeGame = function( game, shared ) {
                 game.debug.geom(line);
             });
             game.debug.text(totalLineLength,25,25);
+
         }
         };
 };
