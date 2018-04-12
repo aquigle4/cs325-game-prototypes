@@ -212,7 +212,18 @@ GameStates.makeGame = function( game, shared ) {
         newHitbox.scale.setTo(2,2);
         sectionHitboxes.push(newHitbox);
     }
-    
+    function randomizeSections(){
+        for (var i = sectionTexts.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = sectionHitboxes[i];
+            var tempNumbers = sectionTexts[i];
+            sectionHitboxes[i] = sectionHitboxes[j];
+            sectionTexts[i] = sectionTexts[j];
+            sectionHitboxes[j] = temp;
+            sectionTexts[j] = tempNumbers;
+            console.log(temp);
+        }
+    }
     return {
     
         create: function () {
@@ -264,7 +275,7 @@ GameStates.makeGame = function( game, shared ) {
             turnInHitbox.alpha = 0.1;
             turnInHitbox.tint = 0x00ff00
             turnInHitbox.scale.setTo(2,2);
-            
+            randomizeSections();
             currentSectionGoal = Math.floor(Math.random() * sectionHitboxes.length);
             drawWall(1,1,1298, 1998,null);
             game.camera.follow(player);
