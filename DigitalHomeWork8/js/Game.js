@@ -32,24 +32,23 @@ GameStates.makeGame = function( game, shared ) {
     }
     function EnemyBulletOut(bullet){
         enemyBullets.remove(bullet);
-        console.log("deleting");
+
         bullet.destroy();
     }
     function bulletOut(bullet){
         playerBullets.remove(bullet);
-        console.log("deleting");
         bullet.destroy();
     }
     function enemyOut(enemy){
         enemys.remove(enemy);
-        console.log("enemyDeleted");
         enemy.destroy;
     }
-    function createBurst(enemy, numBullets,speed){
+    function createBurst(enemy, numBullets,speed,offset = 0){
         for(var i = 0; i< numBullets;i++){
             var newBullet = game.add.sprite(enemy.x,enemy.y,'enemyBullet');
+            newBullet.tint = Phaser.Color.getRandomColor(25,255,255);
             game.physics.arcade.enable(newBullet);
-            var angle = i * (360/numBullets);
+            var angle = (i * (360/numBullets) )+ offset;
             game.physics.arcade.velocityFromAngle(angle,speed,newBullet.body.velocity);
             newBullet.rotation = Phaser.Math.degToRad(angle);
             newBullet.checkWorldBounds = true;
@@ -61,7 +60,7 @@ GameStates.makeGame = function( game, shared ) {
         var newBullet = game.add.sprite(enemy.x,enemy.y,'enemyBullet');
         game.physics.arcade.enable(newBullet);
         var angle = Phaser.Math.radToDeg( game.physics.arcade.angleBetween(enemy,player));
-        console.log(angle);
+        newBullet.tint = Phaser.Color.getRandomColor(100,255,1);
         newBullet.rotation = game.physics.arcade.angleBetween(enemy,player);
         game.physics.arcade.velocityFromAngle(angle,550,newBullet.body.velocity);
         newBullet.checkWorldBounds = true;
@@ -87,14 +86,38 @@ GameStates.makeGame = function( game, shared ) {
         newEnemy.events.onOutOfBounds.add(enemyOut,this);
         enemys.add(newEnemy);
     }
-    function createBurstFireEnemy(x,y,fireRate =30,bulletsPerBurst = 10,bullestSpeed = 400,health = 5){
+    function createBurstFireEnemy(x,y,fireRate =30,bulletsPerBurst = 10,bullestSpeed = 400,health = 5,spinning = false){
         var newEnemy = game.add.sprite(x,y,'whiteBox');
         newEnemy.fireRate= fireRate;
+        newEnemy.bulletSpeed = bullestSpeed;
+        newEnemy.bulletsPerBurst = bulletsPerBurst;
+        newEnemy.offset = 0;
         newEnemy.currentFireTime = 0;
-        newEnemy.bulletsPerBurst = 10;
+        newEnemy.health = health;
+        newEnemy.spinning = spinning;
+        newEnemy.AI = "Burst";
+        game.physics.arcade.enable(newEnemy);
+        newEnemy.anchor.x = 0.5;
+        newEnemy.anchor.y = 0.5;
+        newEnemy.checkWorldBounds = true;
+        newEnemy.events.onOutOfBounds.add(enemyOut,this);
+        enemys.add(newEnemy)
+    }
+    function createPulseBurstFireEnemy(x,y,fireRate =30,bulletsPerBurst = 10,bullestSpeed = 400,health = 5,burstDelay= 360, burstLength = 240,spinning = false){
+        var newEnemy = game.add.sprite(x,y,'whiteBox');
+        newEnemy.spinning = spinning;
+        newEnemy.fireRate= fireRate;
+        newEnemy.offset = 0;
+        newEnemy.currentFireTime = 0;
+        newEnemy.firing = false;
+        newEnemy.bulletsPerBurst = bulletsPerBurst;
         newEnemy.health = health;
         newEnemy.bulletSpeed = bullestSpeed;
-        newEnemy.AI = "Burst";
+        newEnemy.burstDelay = burstDelay;
+        newEnemy.burstLength = burstLength;
+        newEnemy.currentBurstDelay = 0;
+        newEnemy.currentBurstLength = 0;
+        newEnemy.AI = "PB";
         game.physics.arcade.enable(newEnemy);
         newEnemy.anchor.x = 0.5;
         newEnemy.anchor.y = 0.5;
@@ -121,7 +144,8 @@ GameStates.makeGame = function( game, shared ) {
             
             
             createShootToPlayerEnemy(200,200,3,60,30);
-            createBurstFireEnemy(600,200,45,15,600,5);
+            createBurstFireEnemy(400,200,30,50,200,5,true);
+            createPulseBurstFireEnemy(600,200,5,50,200,5);
             player.body.collideWorldBounds=true;
             cursors = game.input.keyboard.createCursorKeys();
             fireButton = game.input.keyboard.addKey(Phaser.Keyboard.Z);
@@ -166,6 +190,7 @@ GameStates.makeGame = function( game, shared ) {
                     if(enemy.firing){
                         enemy.currentBurstLength++;
                         enemy.currentFireTime++;
+
                         if(enemy.currentFireTime >= enemy.fireRate){
                             shootToPlayer(enemy,enemy.bulletSpeed);
                             enemy.currentFireTime = 0;
@@ -183,17 +208,48 @@ GameStates.makeGame = function( game, shared ) {
                     }
                     
                 }
+           
+                if(enemy.AI == "PB"){
+                        if(enemy.spinning){
+                            
+                            enemy.offset+= 1;
+                        }
+                        if(enemy.firing){
+  
+                            enemy.currentBurstLength++;
+                            enemy.currentFireTime++;
+                            if(enemy.currentFireTime >= enemy.fireRate){
+                                createBurst(enemy,enemy.bulletsPerBurst,enemy.bulletSpeed,enemy.offset);
+                                enemy.currentFireTime = 0;
+                            }
+                            if(enemy.currentBurstLength >= enemy.burstLength){
+                                enemy.currentBurstLength = 0;
+                                enemy.firing = false;
+                            }
+                        }else{
+                            enemy.currentBurstDelay++;
+                            if(enemy.currentBurstDelay >= enemy.burstDelay){
+                                enemy.firing = true;
+                                enemy.currentBurstDelay = 0;
+                            }
+                        }
+                }
                 if(enemy.AI == "Burst"){
+                    
                     enemy.currentFireTime++;
-                    console.log(enemy.currentFireTime);
+                    if(enemy.spinning){
+                        console.log('blurg')
+                        enemy.offset+= 1;
+                    }
+                  
                     if(enemy.currentFireTime >= enemy.fireRate){
-                        createBurst(enemy,enemy.bulletsPerBurst,enemy.bulletSpeed);
+                        createBurst(enemy,enemy.bulletsPerBurst,enemy.bulletSpeed,enemy.offset);
                         enemy.currentFireTime = 0;
                     }
                 }
                 var bullet = playerBullets.first;
                 for(var j = 0; j < playerBullets.total;j++){
-                    console.log(enemy.getbounds);
+                    
                     if(checkOverlap(enemy,bullet)){
                         enemy.health--;
                         
@@ -204,6 +260,13 @@ GameStates.makeGame = function( game, shared ) {
                         }
                     }
                     bullet= playerBullets.next;
+                }
+                var eBullet = enemyBullets.first;
+                for(var k = 0; k <enemyBullets.total;k++){
+                    if(checkOverlap(eBullet,hitbox)){
+                        console.log("You got hit!");
+                    }
+                    eBullet = enemyBullets.next;
                 }
                 enemy = enemys.next;
             }
